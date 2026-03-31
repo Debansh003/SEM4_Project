@@ -86,7 +86,6 @@ server.post('/signup-submit', (req, res) => {
         const exists = users.find(user => user.email === req.body.email);
 
         if (exists) {
-            // ❌ User already exists
             return res.send(`
                 <script>
                     alert("User already exists! Please login.");
