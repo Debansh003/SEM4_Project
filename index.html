@@ -28,9 +28,9 @@
     <!-- 🔥 IMPORTANT: FORM (backend connection) -->
     <form action="/predict" method="POST">
         <input type="number" name="area" placeholder="Area (m²)" required>
-        <input type="number" step="0.01" name="efficiency" placeholder="Efficiency" required>
-        <input type="number" step="0.01" name="irradiance" placeholder="Irradiance" required>
-        <input type="number" step="0.01" name="pr" placeholder="Performance Ratio" required>
+        <input type="number" step="0.01" name="efficiency" placeholder="Efficiency (0.15-0.22)" required>
+        <input type="number" step="0.01" name="irradiance" placeholder="Irradiance (kWh/m²/day)" required>
+        <input type="number" step="0.01" name="pr" placeholder="Performance Ratio (0.75-0.85)" required>
 
         <button type="submit">Calculate</button>
     </form>
