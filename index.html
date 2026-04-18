@@ -2,9 +2,17 @@
 <html>
 <head>
     <title>EnergyPredict</title>
+
     <link rel="stylesheet" href="style.css">
+
+    <script src="/theme.js"></script>
+    <script src="/auth.js" defer></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
 </head>
 <body>
+
+<div id="particles-js"></div>
 
 <nav>
     <h2>EnergyPredict</h2>
@@ -14,80 +22,43 @@
         <a href="/contact">Contact</a>
         <a href="/login">Login</a>
         <a href="/signup">Signup</a>
+        <button onclick="toggleTheme()" id="themeBtn">🌙</button>
     </div>
 </nav>
 
-<div class="hero fade-in">
+<div class="hero">
     <h1>Wind & Solar Energy Prediction</h1>
-    <p>Estimate renewable energy using smart parameters</p>
 </div>
 
-<!-- ☀️ SOLAR -->
-<div class="card fade-in">
+<div class="card">
     <h2>Solar Energy Prediction</h2>
 
     <form action="/predict" method="POST">
-        <input type="number" name="area" placeholder="Area (m²)" required>
-        <small>Total panel surface area</small>
-
-        <input type="number" step="0.01" name="efficiency" placeholder="Efficiency" required>
-        <small>Panel efficiency (0.15–0.22)</small>
-
-        <input type="number" step="0.01" name="irradiance" placeholder="Irradiance" required>
-        <small>Sunlight per day</small>
-
-        <input type="number" step="0.01" name="pr" placeholder="Performance Ratio" required>
-        <small>System loss factor</small>
-
+        <input type="number" name="area" placeholder="Area (m²) (Avg: 10–20)" required>
+        <input type="number" name="efficiency" placeholder="Efficiency (0.15–0.22)" required>
+        <input type="number" name="irradiance" placeholder="Irradiance (4–6)" required>
+        <input type="number" name="pr" placeholder="PR (0.75–0.9)" required>
         <button type="submit">Calculate</button>
     </form>
 </div>
 
-<!-- 🌬️ WIND -->
-<div class="card fade-in">
+<div class="card">
     <h2>Wind Energy Prediction</h2>
 
     <form action="/predict-wind" method="POST">
-        <input type="number" name="area" placeholder="Rotor Area" required>
-        <small>Blade swept area</small>
-
-        <input type="number" step="0.01" name="airDensity" placeholder="Air Density" required>
-        <small>Usually 1.225</small>
-
-        <input type="number" step="0.01" name="velocity" placeholder="Wind Speed" required>
-        <small>Wind speed in m/s</small>
-
-        <input type="number" step="0.01" name="cp" placeholder="Power Coefficient" required>
-        <small>0.3–0.5</small>
-
-        <input type="number" step="0.01" name="efficiency" placeholder="Efficiency" required>
-        <small>Generator efficiency</small>
-
+        <input type="number" name="area" placeholder="Rotor Area (10–50)" required>
+        <input type="number" name="airDensity" placeholder="Air Density (1.225)" required>
+        <input type="number" name="velocity" placeholder="Wind Speed (3–12)" required>
+        <input type="number" name="cp" placeholder="Cp (0.3–0.5)" required>
+        <input type="number" name="efficiency" placeholder="Efficiency (0.7–0.9)" required>
         <button type="submit">Calculate</button>
     </form>
 </div>
 
-<!-- 🔥 SCRIPT (IMPORTANT) -->
 <script>
-    const params = new URLSearchParams(window.location.search);
-    const user = params.get("user");
-
-    if (user) {
-        // update all links
-        document.querySelectorAll("a").forEach(link => {
-            if (!link.href.includes("login") && !link.href.includes("signup")) {
-                link.href += `?user=${user}`;
-            }
-        });
-
-        // update all forms
-        document.querySelectorAll("form").forEach(form => {
-            form.action += `?user=${user}`;
-        });
-    } else {
-        // not logged in → redirect
-        window.location.href = "/login";
-    }
+particlesJS("particles-js", {
+  particles: { number: { value: 60 }, size: { value: 3 } }
+});
 </script>
 
 </body>

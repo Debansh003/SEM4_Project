@@ -3,6 +3,8 @@
 <head>
     <title>Contact</title>
     <link rel="stylesheet" href="style.css">
+    <script src="/theme.js"></script>
+
 </head>
 <body>
 
@@ -14,6 +16,18 @@
         <a href="/contact">Contact</a>
         <a href="/login">Login</a>
         <a href="/signup">Signup</a>
+        <button onclick="toggleTheme()" id="themeBtn">🌙</button>
+        
+    </div>
+</nav>
+
+<div class="hero fade-in">
+    <h1>Contact Us</h1>
+</div>
+
+<div class="card fade-in">
+
+    <!-- 🔥 FORM ADDED -->
     </div>
 </nav>
 
@@ -27,7 +41,7 @@
     <form action="/contact-submit" method="POST">
         <input type="text" name="name" placeholder="Your Name" required>
         <input type="email" name="email" placeholder="Email" required>
-        <textarea name="message" placeholder="Message"></textarea>
+        <textarea name="message" required placeholder="Message"></textarea>
         <button type="submit">Send Message</button>
     </form>
 

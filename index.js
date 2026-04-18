@@ -1,207 +1,3 @@
-// import express from 'express';
-// import { fileURLToPath } from 'url';
-// import path from 'path';
-// import fs from 'fs';
-// import { PrismaClient } from '@prisma/client';
-
-// const prisma = new PrismaClient();
-
-// let server = express();
-
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = path.dirname(__filename);
-
-// // ================= MIDDLEWARE =================
-// server.use(express.urlencoded({ extended: false }));
-// server.use(express.static(__dirname));
-
-// // ================= AUTH CHECK =================
-// function isAuth(req, res, next) {
-//     if (req.query.user) next();
-//     else res.redirect('/login');
-// }
-
-// // ================= ROUTES =================
-
-// // 🔒 PROTECTED
-// server.get('/', isAuth, (req, res) => {
-//     res.sendFile(path.join(__dirname, 'index.html'));
-// });
-
-// server.get('/about', isAuth, (req, res) => {
-//     res.sendFile(path.join(__dirname, 'about.html'));
-// });
-
-// server.get('/contact', isAuth, (req, res) => {
-//     res.sendFile(path.join(__dirname, 'contact.html'));
-// });
-
-// // 🔓 PUBLIC
-// server.get('/login', (req, res) => {
-//     res.sendFile(path.join(__dirname, 'login.html'));
-// });
-
-// server.get('/signup', (req, res) => {
-//     res.sendFile(path.join(__dirname, 'signup.html'));
-// });
-
-// // ================= SIGNUP =================
-// server.post('/signup-submit', async (req, res) => {
-//     const { name, email } = req.body;
-
-//     try {
-//         const exists = await prisma.user.findUnique({
-//             where: { email }
-//         });
-
-//         if (exists) {
-//             // return res.send(`
-//             //     <script>
-//             //         alert("User already exists! Login instead.");
-//             //         window.location.href = "/login";
-//             //     </script>
-//             // `);
-//             res.send(`
-//     <script>
-//         alert("Signup successful!");
-//         window.location.href = "/?user=${email}";
-//     </script>
-// `);
-//         }
-
-//         await prisma.user.create({
-//             data: { name, email }
-//         });
-
-//         res.send(`
-//             <script>
-//                 alert("Signup successful!");
-//                 window.location.href = "/login";
-//             </script>
-//         `);
-
-//     } catch (err) {
-//         console.log(err);
-//     }
-// });
-
-// // ================= LOGIN =================
-// server.post('/login-submit', async (req, res) => {
-//     const { email } = req.body;
-
-//     try {
-//         const user = await prisma.user.findUnique({
-//             where: { email }
-//         });
-
-//         if (!user) {
-//             return res.send(`
-//                 <script>
-//                     alert("User not found! Signup first.");
-//                     window.location.href = "/signup";
-//                 </script>
-//             `);
-//         }
-
-//         // ✅ redirect with query
-//         res.send(`
-//             <script>
-//                 alert("Login successful!");
-//                 window.location.href = "/?user=${email}";
-//             </script>
-//         `);
-
-//     } catch (err) {
-//         console.log(err);
-//     }
-// });
-
-// // ================= CONTACT (TEXT FILE) =================
-// server.post('/contact-submit', (req, res) => {
-
-//     fs.readFile('contact.txt', 'utf-8', (err, data) => {
-//         let contacts = [];
-
-//         if (!err && data) {
-//             try {
-//                 contacts = JSON.parse(data);
-//             } catch {}
-//         }
-
-//         contacts.push(req.body);
-
-//         fs.writeFile('contact.txt', JSON.stringify(contacts, null, 2), (err) => {
-//             if (err) console.log(err);
-//             else {
-//                 res.send(`
-//                     <script>
-//                         alert("Message submitted!");
-//                         window.location.href = "/contact?user=${req.query.user}";
-//                     </script>
-//                 `);
-//             }
-//         });
-//     });
-// });
-
-// // ================= ENERGY =================
-
-// // ☀️ SOLAR
-// server.post('/predict', isAuth, (req, res) => {
-//     const { area, efficiency, irradiance, pr } = req.body;
-
-//     const energy = parseFloat(area) *
-//                    parseFloat(efficiency) *
-//                    parseFloat(irradiance) *
-//                    parseFloat(pr);
-
-//     res.send(`
-//         <h1>Solar Energy</h1>
-//         <h2>${energy.toFixed(2)} kWh/day</h2>
-//         <a href="/?user=${req.query.user}">Go Back</a>
-//     `);
-// });
-
-// // 🌬️ WIND
-// server.post('/predict-wind', isAuth, (req, res) => {
-//     const { area, airDensity, velocity, cp, efficiency } = req.body;
-
-//     const energy = 0.5 *
-//         parseFloat(airDensity) *
-//         parseFloat(area) *
-//         Math.pow(parseFloat(velocity), 3) *
-//         parseFloat(cp) *
-//         parseFloat(efficiency);
-
-//     res.send(`
-//         <h1>Wind Energy</h1>
-//         <h2>${energy.toFixed(2)} Watts</h2>
-//         <a href="/?user=${req.query.user}">Go Back</a>
-//     `);
-// });
-
-// server.get('/result', (req, res) => {
-//     res.send(`
-//         <h1>Predicted Wind Energy</h1>
-//         <h2>${windEnergy.toFixed(2)} Watts</h2>
-//         <a href="/">Go Back</a>
-//     `);
-//     });
-
-// // ================= SERVER =================
-// server.listen(3000, () => {
-//     console.log("Server: http://localhost:3000");
-// });
-
-
-
-
-
-
-
-
-
-
 import express from 'express';
 import { fileURLToPath } from 'url';
 import path from 'path';
@@ -209,8 +5,7 @@ import fs from 'fs';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
-
-let server = express();
+const server = express();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -219,7 +14,7 @@ const __dirname = path.dirname(__filename);
 server.use(express.urlencoded({ extended: false }));
 server.use(express.static(__dirname));
 
-// ================= AUTH CHECK =================
+// ================= AUTH =================
 function isAuth(req, res, next) {
     if (req.query.user) next();
     else res.redirect('/login');
@@ -254,9 +49,7 @@ server.post('/signup-submit', async (req, res) => {
     const { name, email } = req.body;
 
     try {
-        const exists = await prisma.user.findUnique({
-            where: { email }
-        });
+        const exists = await prisma.user.findUnique({ where: { email } });
 
         if (exists) {
             return res.send(`
@@ -267,11 +60,8 @@ server.post('/signup-submit', async (req, res) => {
             `);
         }
 
-        await prisma.user.create({
-            data: { name, email }
-        });
+        await prisma.user.create({ data: { name, email } });
 
-        // ✅ AUTO LOGIN AFTER SIGNUP
         res.send(`
             <script>
                 alert("Signup successful!");
@@ -289,9 +79,7 @@ server.post('/login-submit', async (req, res) => {
     const { email } = req.body;
 
     try {
-        const user = await prisma.user.findUnique({
-            where: { email }
-        });
+        const user = await prisma.user.findUnique({ where: { email } });
 
         if (!user) {
             return res.send(`
@@ -314,8 +102,18 @@ server.post('/login-submit', async (req, res) => {
     }
 });
 
-// ================= CONTACT (TEXT FILE) =================
+// ================= CONTACT =================
 server.post('/contact-submit', (req, res) => {
+    const { message } = req.body;
+
+    if (!message || message.trim() === "") {
+        return res.send(`
+            <script>
+                alert("Message is required!");
+                window.history.back();
+            </script>
+        `);
+    }
 
     fs.readFile('contact.txt', 'utf-8', (err, data) => {
         let contacts = [];
@@ -348,10 +146,11 @@ server.post('/contact-submit', (req, res) => {
 server.post('/predict', isAuth, (req, res) => {
     const { area, efficiency, irradiance, pr } = req.body;
 
-    const energy = parseFloat(area) *
-                   parseFloat(efficiency) *
-                   parseFloat(irradiance) *
-                   parseFloat(pr);
+    const energy =
+        parseFloat(area) *
+        parseFloat(efficiency) *
+        parseFloat(irradiance) *
+        parseFloat(pr);
 
     res.redirect(`/result.html?energy=${energy}&user=${req.query.user}`);
 });
@@ -360,7 +159,8 @@ server.post('/predict', isAuth, (req, res) => {
 server.post('/predict-wind', isAuth, (req, res) => {
     const { area, airDensity, velocity, cp, efficiency } = req.body;
 
-    const energy = 0.5 *
+    const energy =
+        0.5 *
         parseFloat(airDensity) *
         parseFloat(area) *
         Math.pow(parseFloat(velocity), 3) *

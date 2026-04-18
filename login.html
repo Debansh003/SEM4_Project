@@ -3,18 +3,15 @@
 <head>
     <title>Login</title>
     <link rel="stylesheet" href="style.css">
+    <script src="/theme.js"></script>
 </head>
 <body>
 
+<div id="particles-js"></div>
+
 <nav>
     <h2>EnergyPredict</h2>
-    <div>
-        <a href="/">Home</a>
-        <a href="/about">About</a>
-        <a href="/contact">Contact</a>
-        <a href="/login">Login</a>
-        <a href="/signup">Signup</a>
-    </div>
+    <button onclick="toggleTheme()" id="themeBtn">🌙</button>
 </nav>
 
 <div class="card">
@@ -25,7 +22,7 @@
         <button type="submit">Login</button>
     </form>
 
-    <a href="/signup">Don't have an account? Signup</a>
+    <a href="/signup">Signup</a>
 </div>
 
 </body>

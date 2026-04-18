@@ -5,12 +5,27 @@
     box-sizing: border-box;
 }
 
+/* BACKGROUND PARTICLES */
+#particles-js {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
 /* BODY */
 body {
     font-family: 'Segoe UI', sans-serif;
     background: radial-gradient(circle at top, #0f172a, #020617);
     color: #e2e8f0;
     min-height: 100vh;
+    animation: fadeIn 0.6s ease;
+}
+
+/* LIGHT MODE */
+body[data-theme="light"] {
+    background: #f1f5f9;
+    color: #020617;
 }
 
 /* NAVBAR */
@@ -19,220 +34,217 @@ nav {
     justify-content: space-between;
     align-items: center;
     padding: 20px 60px;
-    background: rgba(2, 6, 23, 0.7);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(255,255,255,0.05);
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+body[data-theme="light"] nav {
+    background: rgba(255,255,255,0.8);
 }
 
 nav h2 {
-    color: #38bdf8;
-    letter-spacing: 1px;
+    background: linear-gradient(90deg, #38bdf8, #22d3ee);
+    -webkit-background-clip: text;
+    color: transparent;
 }
 
 nav a {
     color: #cbd5f5;
     margin: 0 12px;
     text-decoration: none;
-    position: relative;
-    transition: 0.3s;
 }
 
-nav a::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    bottom: -4px;
-    width: 0%;
-    height: 2px;
-    background: #38bdf8;
-    transition: 0.3s;
-}
-
-nav a:hover {
-    color: #38bdf8;
-}
-
-nav a:hover::after {
-    width: 100%;
+body[data-theme="light"] nav a {
+    color: #020617;
 }
 
 /* HERO */
 .hero {
     text-align: center;
-    padding: 80px 20px 40px;
+    padding: 120px 20px 60px;
 }
 
 .hero h1 {
     font-size: 2.8rem;
     color: #38bdf8;
-    font-weight: 600;
-    letter-spacing: 1px;
-    animation: glowPulse 2.5s infinite alternate;
-
-    text-shadow: 
-        0 0 8px rgba(56, 189, 248, 0.6),
-        0 0 20px rgba(56, 189, 248, 0.4),
-        0 0 40px rgba(56, 189, 248, 0.2);
-}
-
-@keyframes glowPulse {
-    from {
-        text-shadow: 
-            0 0 5px rgba(56, 189, 248, 0.4),
-            0 0 15px rgba(56, 189, 248, 0.3);
-    }
-    to {
-        text-shadow: 
-            0 0 12px rgba(56, 189, 248, 0.8),
-            0 0 30px rgba(56, 189, 248, 0.6);
-    }
 }
 
 .hero p {
     opacity: 0.7;
-    font-size: 1.1rem;
 }
 
 /* CARD */
 .card {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.08);
-    backdrop-filter: blur(18px);
-    padding: 40px; /* increased */
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    backdrop-filter: blur(25px);
+    padding: 40px;
     border-radius: 18px;
     width: 90%;
-    max-width: 650px; /* increased width */
+    max-width: 650px;
     margin: 25px auto;
-    box-shadow: 0 8px 40px rgba(0,0,0,0.6);
-    transition: all 0.3s ease;
+    transition: 0.3s;
+}
+
+body[data-theme="light"] .card {
+    background: rgba(255,255,255,0.9);
+    color: #000;
 }
 
 .card:hover {
-    transform: translateY(-8px) scale(1.01);
-    box-shadow: 0 15px 50px rgba(56,189,248,0.15);
+    transform: translateY(-6px);
 }
 
-/* HEADINGS */
-.card h2 {
-    margin-bottom: 15px;
-    color: #38bdf8;
-}
-
-/* FORM LAYOUT */
+/* FORM */
 form {
     display: flex;
     flex-direction: column;
-    gap: 8px;
 }
 
 /* INPUT */
-input, textarea {
-    display: block;
-    width: 100%;
+input {
     padding: 12px;
-    margin: 10px 0 5px;
+    margin: 10px 0;
     border-radius: 8px;
     border: 1px solid rgba(255,255,255,0.1);
     background: rgba(255,255,255,0.05);
     color: white;
-    outline: none;
-    transition: 0.3s;
 }
 
-input:focus, textarea:focus {
+body[data-theme="light"] input {
+    background: white;
+    color: black;
+}
+
+input:focus {
     border-color: #38bdf8;
-    box-shadow: 0 0 10px rgba(56,189,248,0.3);
-}
-
-/* INPUT DESCRIPTION */
-small {
-    display: block;
-    margin-top: -5px;
-    margin-bottom: 10px;
-    font-size: 0.85rem;
-    opacity: 0.7;
 }
 
 /* BUTTON */
 button {
-    width: 100%;
     padding: 12px;
     border-radius: 8px;
     border: none;
-    background: linear-gradient(90deg, #38bdf8, #22d3ee);
-    color: #020617;
-    font-weight: bold;
+    background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+    color: white;
     cursor: pointer;
-    transition: 0.3s;
-    margin-top: 10px;
 }
 
-button:hover {
-    transform: scale(1.04);
-    box-shadow: 0 5px 20px rgba(56,189,248,0.4);
-}
-
-/* RESULT TEXT */
+/* RESULT */
 #energyValue {
     font-size: 2.5rem;
-    font-weight: bold;
     text-align: center;
-    color: #22d3ee;
 }
 
 /* LINKS */
 a {
     display: inline-block;
-    margin-top: 15px;
-    text-align: center;
-    color: #38bdf8;
-    text-decoration: none;
-    transition: 0.3s;
-}
-
-a:hover {
-    color: #22d3ee;
-}
-
-/* LIST */
-ul {
-    margin-left: 20px;
     margin-top: 10px;
+    color: #38bdf8;
 }
 
-li {
-    margin-bottom: 6px;
-}
-
-/* FADE ANIMATION */
+/* FADE */
 .fade-in {
-    animation: fadeIn 1s ease forwards;
+    animation: fadeIn 1s ease;
 }
 
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(25px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from {opacity: 0;}
+    to {opacity: 1;}
 }
 
-/* RESPONSIVE */
-@media (max-width: 600px) {
-    nav {
-        flex-direction: column;
-        gap: 10px;
-        padding: 20px;
-    }
+/* Better spacing for inputs */
+input {
+    padding: 14px;
+    font-size: 0.95rem;
+}
 
-    .hero h1 {
-        font-size: 2rem;
-    }
+/* Better small text */
+small {
+    opacity: 0.65;
+    font-size: 0.8rem;
+}
 
-    .card {
-        padding: 25px;
-    }
+/* Button upgrade */
+button {
+    background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+    font-weight: 600;
+}
+
+/* Smooth hover */
+button:hover {
+    transform: scale(1.03);
+}
+
+/* Card glow */
+.card:hover {
+    box-shadow: 0 15px 50px rgba(56,189,248,0.15);
+}
+
+/* Light mode fix */
+body[data-theme="light"] input {
+    background: white;
+    color: black;
+}
+/* Smooth transition for all form elements */
+input, textarea, button {
+    transition: all 0.3s ease;
+}
+
+/* ✨ INPUT GLOW ON FOCUS */
+input:focus, textarea:focus {
+    border-color: #38bdf8;
+    box-shadow: 
+        0 0 8px rgba(56,189,248,0.4),
+        0 0 18px rgba(56,189,248,0.3),
+        0 0 30px rgba(56,189,248,0.2);
+    transform: scale(1.02);
+}
+
+/* ✨ INPUT HOVER GLOW */
+input:hover {
+    border-color: #22d3ee;
+    box-shadow: 0 0 10px rgba(34,211,238,0.25);
+}
+
+/* ✨ FORM GROUP GLOW (CARD REACTS WHEN INPUT ACTIVE) */
+.card:focus-within {
+    box-shadow: 
+        0 0 20px rgba(56,189,248,0.2),
+        0 0 60px rgba(56,189,248,0.1);
+    transform: translateY(-5px);
+}
+
+/* ✨ BUTTON GLOW */
+button:hover {
+    box-shadow: 
+        0 0 10px rgba(56,189,248,0.5),
+        0 0 25px rgba(56,189,248,0.3);
+    transform: scale(1.05);
+}
+
+/* ✨ ACTIVE CLICK EFFECT */
+button:active {
+    transform: scale(0.97);
+}
+
+/* ✨ LIGHT MODE FIX (so glow still visible) */
+html[data-theme="light"] body {
+    background: #f1f5f9;
+    color: #020617;
+}
+
+html[data-theme="light"] .card {
+    background: rgba(255,255,255,0.9);
+    color: black;
+}
+
+html[data-theme="light"] input {
+    background: white;
+    color: black;
+}
+.card {
+    height: auto;        /* ensures full content shows */
+    overflow: visible;   /* prevents clipping */
 }
