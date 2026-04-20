@@ -5,15 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>EnergyPredict — Dashboard</title>
   <link rel="stylesheet" href="style.css">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous">
+  <!-- AOS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" crossorigin="anonymous">
+
   <script src="/theme.js"></script>
   <script src="/auth.js" defer></script>
 </head>
 <body>
 
-<!-- NAV -->
-<nav>
+<!-- BACKGROUND -->
+<div class="bg-grid"></div>
+<div class="bg-orb bg-orb-1"></div>
+<div class="bg-orb bg-orb-2"></div>
+<div id="particles-js"></div>
+<div id="cursor-glow"></div>
+
+<!-- NAVBAR -->
+<nav id="navbar">
   <a href="/" class="nav-brand">
-    <div class="nav-brand-icon">⚡</div>
+    <div class="nav-logo">⚡</div>
     <h2>EnergyPredict</h2>
   </a>
   <div class="nav-links">
@@ -26,130 +39,248 @@
   </div>
 </nav>
 
-<div class="page">
+<div class="page-wrap pt-nav">
 
   <!-- HERO -->
-  <div class="hero fade-in">
-    <div class="hero-eyebrow">🔋 Renewable Energy Calculator</div>
-    <h1>Predict Your <span>Energy Output</span></h1>
-    <p>Estimate daily energy generation from solar panels or wind turbines using precise physical models.</p>
+  <div class="hero">
+    <div class="hero-eyebrow" data-aos="fade-down" data-aos-duration="600">
+      <span class="pulse-dot"></span>
+      Renewable Energy Calculator
+    </div>
+    <h1 data-aos="fade-up" data-aos-duration="700" data-aos-delay="80">
+      Predict Your<br><span class="grad">Energy Output</span>
+    </h1>
+    <p class="hero-desc" data-aos="fade-up" data-aos-duration="700" data-aos-delay="160">
+      Physics-based estimation for solar panels and wind turbines.
+      Enter your parameters and get instant daily kWh projections.
+    </p>
   </div>
 
   <!-- STATS -->
-  <div class="stats-row fade-in">
-    <div class="stat-item">
-      <div class="stat-value">99.2%</div>
-      <div class="stat-label">Accuracy</div>
+  <div class="stats-row" data-aos="fade-up" data-aos-duration="600" data-aos-delay="200">
+    <div class="stat-card">
+      <div class="stat-value count-up" data-target="99.2" data-suffix="%">0%</div>
+      <div class="stat-label">Model Accuracy</div>
     </div>
-    <div class="stat-item">
-      <div class="stat-value">2</div>
-      <div class="stat-label">Energy Types</div>
+    <div class="stat-card">
+      <div class="stat-value count-up" data-target="2" data-suffix="">0</div>
+      <div class="stat-label">Energy Sources</div>
     </div>
-    <div class="stat-item">
-      <div class="stat-value">kWh</div>
+    <div class="stat-card">
+      <div class="stat-value" style="color:var(--green)">kWh</div>
       <div class="stat-label">Output Unit</div>
     </div>
   </div>
 
   <!-- TABS -->
-  <div class="energy-tabs fade-in">
+  <div class="tabs-wrap" data-aos="fade-up" data-aos-duration="600" data-aos-delay="240" style="margin-bottom:0">
     <div class="tabs">
       <button class="tab-btn active" onclick="switchTab('solar', this)">
-        ☀️ Solar Energy
+        <span class="tab-icon">☀️</span> Solar Energy
       </button>
       <button class="tab-btn" onclick="switchTab('wind', this)">
-        🌬️ Wind Energy
+        <span class="tab-icon">🌬️</span> Wind Energy
       </button>
     </div>
   </div>
 
-  <!-- SOLAR CARD -->
-  <div class="card fade-in" id="panel-solar" style="display:block">
+  <!-- SOLAR PANEL -->
+  <div class="card" id="panel-solar" data-aos="fade-up" data-aos-duration="600" data-aos-delay="280">
     <div class="card-icon">☀️</div>
-    <div class="section-label">Solar Panel Calculator</div>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;position:relative;z-index:1">
+      <h2 style="font-family:var(--font-display);font-size:1.25rem;font-weight:800">Solar Calculator</h2>
+      <span class="badge badge-solar">Photovoltaic</span>
+    </div>
+    <div class="section-label" style="margin-top:18px">Parameters</div>
 
     <form action="/predict" method="POST">
       <div class="form-row">
         <div class="form-group">
-          <label for="area">Panel Area</label>
-          <input type="number" name="area" id="area" placeholder="e.g. 10" step="any" required>
-          <div class="input-hint">m²</div>
+          <label><i class="fa fa-expand"></i> Panel Area</label>
+          <div class="input-wrap">
+            <i class="fa fa-vector-square"></i>
+            <input type="number" name="area" placeholder="e.g. 10" step="any" required>
+          </div>
+          <div class="input-hint">m² — total panel surface</div>
         </div>
         <div class="form-group">
-          <label for="efficiency">Efficiency</label>
-          <input type="number" name="efficiency" id="efficiency" placeholder="e.g. 0.20" step="any" required>
-          <div class="input-hint">0 – 1 (20% = 0.20)</div>
+          <label><i class="fa fa-bolt"></i> Efficiency (η)</label>
+          <div class="input-wrap">
+            <i class="fa fa-percent"></i>
+            <input type="number" name="efficiency" placeholder="e.g. 0.20" step="any" required>
+          </div>
+          <div class="input-hint">0 – 1 &nbsp;·&nbsp; 20% = 0.20</div>
         </div>
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label for="irradiance">Solar Irradiance</label>
-          <input type="number" name="irradiance" id="irradiance" placeholder="e.g. 5" step="any" required>
-          <div class="input-hint">kWh/m²/day</div>
+          <label><i class="fa fa-sun"></i> Solar Irradiance</label>
+          <div class="input-wrap">
+            <i class="fa fa-sun"></i>
+            <input type="number" name="irradiance" placeholder="e.g. 5" step="any" required>
+          </div>
+          <div class="input-hint">kWh/m²/day — daily resource</div>
         </div>
         <div class="form-group">
-          <label for="pr">Performance Ratio</label>
-          <input type="number" name="pr" id="pr" placeholder="e.g. 0.75" step="any" required>
+          <label><i class="fa fa-chart-line"></i> Performance Ratio</label>
+          <div class="input-wrap">
+            <i class="fa fa-sliders"></i>
+            <input type="number" name="pr" placeholder="e.g. 0.75" step="any" required>
+          </div>
           <div class="input-hint">Typical: 0.70 – 0.85</div>
         </div>
       </div>
       <button type="submit" class="btn btn-primary btn-full">
-        Calculate Solar Output →
+        <i class="fa fa-calculator"></i> Calculate Solar Output
       </button>
     </form>
   </div>
 
-  <!-- WIND CARD -->
-  <div class="card fade-in" id="panel-wind" style="display:none">
+  <!-- WIND PANEL -->
+  <div class="card" id="panel-wind" style="display:none" data-aos="fade-up" data-aos-duration="600">
     <div class="card-icon">🌬️</div>
-    <div class="section-label">Wind Turbine Calculator</div>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;position:relative;z-index:1">
+      <h2 style="font-family:var(--font-display);font-size:1.25rem;font-weight:800">Wind Calculator</h2>
+      <span class="badge badge-wind">Turbine</span>
+    </div>
+    <div class="section-label" style="margin-top:18px">Parameters</div>
 
     <form action="/predict-wind" method="POST">
       <div class="form-row">
         <div class="form-group">
-          <label for="area-w">Rotor Swept Area</label>
-          <input type="number" name="area" id="area-w" placeholder="e.g. 78.5" step="any" required>
-          <div class="input-hint">m² (π × r²)</div>
+          <label><i class="fa fa-circle-dot"></i> Swept Area</label>
+          <div class="input-wrap">
+            <i class="fa fa-circle"></i>
+            <input type="number" name="area" placeholder="e.g. 78.5" step="any" required>
+          </div>
+          <div class="input-hint">m² — π × r²</div>
         </div>
         <div class="form-group">
-          <label for="airDensity">Air Density</label>
-          <input type="number" name="airDensity" id="airDensity" placeholder="e.g. 1.225" step="any" required>
-          <div class="input-hint">kg/m³ (std: 1.225)</div>
+          <label><i class="fa fa-wind"></i> Air Density (ρ)</label>
+          <div class="input-wrap">
+            <i class="fa fa-cloud"></i>
+            <input type="number" name="airDensity" placeholder="e.g. 1.225" step="any" required>
+          </div>
+          <div class="input-hint">kg/m³ &nbsp;·&nbsp; std: 1.225</div>
         </div>
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label for="velocity">Wind Speed</label>
-          <input type="number" name="velocity" id="velocity" placeholder="e.g. 7" step="any" required>
+          <label><i class="fa fa-gauge-high"></i> Wind Speed</label>
+          <div class="input-wrap">
+            <i class="fa fa-arrow-right"></i>
+            <input type="number" name="velocity" placeholder="e.g. 7" step="any" required>
+          </div>
           <div class="input-hint">m/s</div>
         </div>
         <div class="form-group">
-          <label for="cp">Power Coefficient (Cp)</label>
-          <input type="number" name="cp" id="cp" placeholder="e.g. 0.45" step="any" required>
-          <div class="input-hint">Max Betz: 0.593</div>
+          <label><i class="fa fa-gear"></i> Power Coeff. (Cp)</label>
+          <div class="input-wrap">
+            <i class="fa fa-rotate"></i>
+            <input type="number" name="cp" placeholder="e.g. 0.45" step="any" required>
+          </div>
+          <div class="input-hint">Max Betz limit: 0.593</div>
         </div>
       </div>
       <div class="form-group">
-        <label for="efficiency-w">Generator Efficiency</label>
-        <input type="number" name="efficiency" id="efficiency-w" placeholder="e.g. 0.90" step="any" required>
-        <div class="input-hint">0 – 1 (90% = 0.90)</div>
+        <label><i class="fa fa-bolt"></i> Generator Efficiency</label>
+        <div class="input-wrap">
+          <i class="fa fa-percent"></i>
+          <input type="number" name="efficiency" placeholder="e.g. 0.90" step="any" required>
+        </div>
+        <div class="input-hint">0 – 1 &nbsp;·&nbsp; 90% = 0.90</div>
       </div>
       <button type="submit" class="btn btn-primary btn-full">
-        Calculate Wind Output →
+        <i class="fa fa-calculator"></i> Calculate Wind Output
       </button>
     </form>
   </div>
 
-</div><!-- /page -->
+</div><!-- /page-wrap -->
+
+<!-- TOAST -->
+<div id="toast"><span id="toast-icon">✅</span><span id="toast-msg">Done</span></div>
+
+<!-- CDN SCRIPTS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js" crossorigin="anonymous"></script>
 
 <script>
+/* ── AOS ── */
+AOS.init({ once: true, offset: 30 });
+
+/* ── PARTICLES ── */
+particlesJS('particles-js', {
+  particles: {
+    number: { value: 55, density: { enable: true, value_area: 900 } },
+    color:  { value: '#00d4ff' },
+    shape:  { type: 'circle' },
+    opacity:{ value: 0.18, random: true, anim: { enable: true, speed: 0.6, opacity_min: 0.05 } },
+    size:   { value: 2, random: true },
+    line_linked: { enable: true, distance: 130, color: '#00d4ff', opacity: 0.08, width: 1 },
+    move:   { enable: true, speed: 0.7, direction: 'none', random: true, out_mode: 'out' }
+  },
+  interactivity: {
+    detect_on: 'canvas',
+    events: { onhover: { enable: true, mode: 'grab' }, onclick: { enable: true, mode: 'push' } },
+    modes:  { grab: { distance: 140, line_linked: { opacity: 0.3 } }, push: { particles_nb: 3 } }
+  }
+});
+
+/* ── CURSOR GLOW ── */
+document.addEventListener('mousemove', e => {
+  const g = document.getElementById('cursor-glow');
+  if (g) { g.style.left = e.clientX + 'px'; g.style.top = e.clientY + 'px'; }
+});
+
+/* ── NAVBAR SCROLL ── */
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 20);
+});
+
+/* ── TAB SWITCH with GSAP ── */
 function switchTab(type, btn) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  document.getElementById('panel-solar').style.display = type === 'solar' ? 'block' : 'none';
-  document.getElementById('panel-wind').style.display  = type === 'wind'  ? 'block' : 'none';
-}
-</script>
+  const solar = document.getElementById('panel-solar');
+  const wind  = document.getElementById('panel-wind');
+  const show  = type === 'solar' ? solar : wind;
+  const hide  = type === 'solar' ? wind  : solar;
 
+  gsap.to(hide, { opacity: 0, y: 10, duration: 0.2, onComplete: () => {
+    hide.style.display = 'none';
+    show.style.display = 'block';
+    show.style.opacity = 0;
+    gsap.to(show, { opacity: 1, y: 0, duration: 0.4, ease: 'power3.out' });
+  }});
+}
+
+/* ── COUNT UP ── */
+function animateCountUp(el) {
+  const target = parseFloat(el.dataset.target);
+  const suffix = el.dataset.suffix || '';
+  const isFloat = target % 1 !== 0;
+  const duration = 1400;
+  const start = performance.now();
+  function step(now) {
+    const p = Math.min((now - start) / duration, 1);
+    const val = p * target;
+    el.textContent = (isFloat ? val.toFixed(1) : Math.floor(val)) + suffix;
+    if (p < 1) requestAnimationFrame(step);
+    else el.textContent = target + suffix;
+  }
+  requestAnimationFrame(step);
+}
+
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { animateCountUp(e.target); io.unobserve(e.target); } });
+}, { threshold: 0.5 });
+
+document.querySelectorAll('.count-up').forEach(el => io.observe(el));
+
+/* ── GSAP PAGE ENTRANCE ── */
+gsap.from('#navbar', { y: -20, opacity: 0, duration: 0.7, ease: 'power3.out' });
+</script>
 </body>
 </html>

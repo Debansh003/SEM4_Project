@@ -5,14 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>About — EnergyPredict</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" crossorigin="anonymous">
   <script src="/theme.js"></script>
   <script src="/auth.js" defer></script>
 </head>
 <body>
 
-<nav>
+<div class="bg-grid"></div>
+<div class="bg-orb bg-orb-1"></div>
+<div class="bg-orb bg-orb-2"></div>
+<div id="particles-js"></div>
+<div id="cursor-glow"></div>
+
+<nav id="navbar">
   <a href="/" class="nav-brand">
-    <div class="nav-brand-icon">⚡</div>
+    <div class="nav-logo">⚡</div>
     <h2>EnergyPredict</h2>
   </a>
   <div class="nav-links">
@@ -25,72 +33,105 @@
   </div>
 </nav>
 
-<div class="page">
+<div class="page-wrap pt-nav">
 
-  <div class="hero fade-in">
-    <div class="hero-eyebrow">📖 Documentation</div>
-    <h1>About <span>EnergyPredict</span></h1>
-    <p>Understand the physical models powering our renewable energy calculations.</p>
+  <div class="hero" data-aos="fade-down" data-aos-duration="600">
+    <div class="hero-eyebrow"><span class="pulse-dot"></span> Documentation</div>
+    <h1>How It <span class="grad">Works</span></h1>
+    <p class="hero-desc">Physics-based models used to estimate daily renewable energy generation from your system parameters.</p>
   </div>
 
   <div class="about-grid">
 
-    <!-- Solar Card -->
-    <div class="card fade-in" style="margin:0; max-width:100%; width:100%">
+    <!-- Solar -->
+    <div class="card about-card" data-aos="fade-right" data-aos-duration="700" data-aos-delay="0">
       <div class="card-icon">☀️</div>
-      <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px">
-        <h2 style="margin:0">Solar Energy</h2>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;position:relative;z-index:1">
+        <h2 style="font-family:var(--font-display);font-size:1.2rem;font-weight:800">Solar Energy</h2>
         <span class="badge badge-solar">Photovoltaic</span>
       </div>
-      <p>Uses sunlight to generate electricity via photovoltaic panels. The output depends on how much sunlight the panels receive and how efficiently they convert it.</p>
-
-      <div class="formula-box">
-        E = Area × η × Irradiance × PR
-      </div>
-
+      <p style="color:var(--text-muted);font-size:0.9rem;line-height:1.7;position:relative;z-index:1">
+        Converts sunlight into electricity using photovoltaic cells. The output depends on the panel area, how efficiently the cells work, the available solar resource, and system losses.
+      </p>
+      <div class="formula-box">E = Area &times; &eta; &times; Irradiance &times; PR</div>
       <ul class="feature-list">
-        <li>Area — panel surface in m²</li>
-        <li>η — panel efficiency (0–1)</li>
-        <li>Irradiance — daily solar resource (kWh/m²)</li>
-        <li>PR — performance ratio (0.70–0.85)</li>
+        <li><i class="fa fa-expand" style="color:var(--accent);margin-right:8px"></i>Area — panel surface in m²</li>
+        <li><i class="fa fa-percent" style="color:var(--accent);margin-right:8px"></i>η — panel efficiency (0 – 1)</li>
+        <li><i class="fa fa-sun" style="color:var(--gold);margin-right:8px"></i>Irradiance — kWh/m²/day</li>
+        <li><i class="fa fa-sliders" style="color:var(--accent);margin-right:8px"></i>PR — performance ratio (0.70 – 0.85)</li>
       </ul>
     </div>
 
-    <!-- Wind Card -->
-    <div class="card fade-in" style="margin:0; max-width:100%; width:100%">
+    <!-- Wind -->
+    <div class="card about-card" data-aos="fade-left" data-aos-duration="700" data-aos-delay="80">
       <div class="card-icon">🌬️</div>
-      <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px">
-        <h2 style="margin:0">Wind Energy</h2>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;position:relative;z-index:1">
+        <h2 style="font-family:var(--font-display);font-size:1.2rem;font-weight:800">Wind Energy</h2>
         <span class="badge badge-wind">Turbine</span>
       </div>
-      <p>Wind turbines extract kinetic energy from moving air. Output scales with the cube of wind speed, so even small speed increases yield large gains.</p>
-
-      <div class="formula-box">
-        P = ½ × ρ × A × v³ × Cp × η
-      </div>
-
+      <p style="color:var(--text-muted);font-size:0.9rem;line-height:1.7;position:relative;z-index:1">
+        Wind turbines extract kinetic energy from moving air. Power scales with the cube of wind speed — doubling the wind speed yields 8× the power. The Betz limit (0.593) is the theoretical maximum Cp.
+      </p>
+      <div class="formula-box">P = &frac12; &times; &rho; &times; A &times; v&sup3; &times; Cp &times; &eta;</div>
       <ul class="feature-list">
-        <li>ρ — air density (1.225 kg/m³ at sea level)</li>
-        <li>A — rotor swept area (π × r²)</li>
-        <li>v — wind speed (m/s)</li>
-        <li>Cp — power coefficient (max 0.593 Betz)</li>
-        <li>η — generator efficiency</li>
+        <li><i class="fa fa-cloud" style="color:var(--accent);margin-right:8px"></i>ρ — air density (1.225 kg/m³ std)</li>
+        <li><i class="fa fa-circle" style="color:var(--accent);margin-right:8px"></i>A — rotor swept area (π × r²)</li>
+        <li><i class="fa fa-wind" style="color:var(--accent2);margin-right:8px"></i>v — wind speed (m/s)</li>
+        <li><i class="fa fa-rotate" style="color:var(--accent);margin-right:8px"></i>Cp — power coefficient (max 0.593)</li>
+        <li><i class="fa fa-bolt" style="color:var(--gold);margin-right:8px"></i>η — generator efficiency</li>
       </ul>
     </div>
 
   </div>
 
-  <!-- Objective card -->
-  <div class="card fade-in">
+  <!-- Objective -->
+  <div class="card" data-aos="fade-up" data-aos-duration="700" data-aos-delay="120">
     <div class="card-icon">🎯</div>
-    <h2>Our Objective</h2>
-    <p>EnergyPredict exists to make renewable energy planning accessible. Whether you're sizing a rooftop solar array or evaluating a small wind installation, our calculators give you instant, physics-based estimates to inform your decisions.</p>
-    <div style="margin-top:20px">
-      <a href="/" class="btn btn-primary">Try the Calculator →</a>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;position:relative;z-index:1">
+      <h2 style="font-family:var(--font-display);font-size:1.2rem;font-weight:800">Our Objective</h2>
+      <span class="badge badge-green">Open Tool</span>
+    </div>
+    <p style="color:var(--text-muted);line-height:1.75;position:relative;z-index:1">
+      EnergyPredict makes renewable energy planning accessible to everyone.
+      Whether you're sizing a rooftop solar array or evaluating a small wind installation,
+      our calculators give instant, physics-based estimates to inform your decisions —
+      no spreadsheets or engineering degree required.
+    </p>
+    <div style="margin-top:24px;display:flex;gap:12px;flex-wrap:wrap;position:relative;z-index:1">
+      <a href="/" class="btn btn-primary"><i class="fa fa-calculator"></i> Try the Calculator</a>
+      <a href="/contact" class="btn btn-ghost"><i class="fa fa-envelope"></i> Get in Touch</a>
     </div>
   </div>
 
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js" crossorigin="anonymous"></script>
+
+<script>
+AOS.init({ once: true, offset: 40 });
+
+particlesJS('particles-js', {
+  particles: {
+    number: { value: 40 }, color: { value: '#00d4ff' }, shape: { type: 'circle' },
+    opacity: { value: 0.13, random: true }, size: { value: 1.7, random: true },
+    line_linked: { enable: true, distance: 110, color: '#00d4ff', opacity: 0.06, width: 1 },
+    move: { enable: true, speed: 0.55, random: true, out_mode: 'out' }
+  },
+  interactivity: { detect_on: 'canvas', events: { onhover: { enable: true, mode: 'grab' } } }
+});
+
+document.addEventListener('mousemove', e => {
+  const g = document.getElementById('cursor-glow');
+  if (g) { g.style.left = e.clientX + 'px'; g.style.top = e.clientY + 'px'; }
+});
+
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 20);
+});
+
+gsap.from('#navbar', { y: -20, opacity: 0, duration: 0.7, ease: 'power3.out' });
+</script>
 </body>
 </html>
