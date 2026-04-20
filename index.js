@@ -169,12 +169,9 @@ server.post('/contact-submit', isAuth, async (req, res) => {
             data: { name, email, message }
         });
 
-        res.send(`
-            <script>
-                alert("Message submitted!");
-                window.location.href = "/contact";
-            </script>
-        `);
+        // ✅ FIXED REDIRECT
+        res.redirect('/contact');
+
     } catch (err) {
         console.log(err);
     }
