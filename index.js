@@ -16,12 +16,16 @@ const __dirname = path.dirname(__filename);
 server.use(express.urlencoded({ extended: false }));
 server.use('/static', express.static(__dirname));
 
-// ✅ SESSION
+server.set('trust proxy', 1);
+
 server.use(session({
-    secret: 'supersecretkey',
+    secret: process.env.SESSION_SECRET || 'secret',
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: true } // true only in HTTPS
+    cookie: {
+        secure: true,       // REQUIRED on Render
+        sameSite: 'none'    // important for deployment
+    }
 }));
 
 // ================= AUTH MIDDLEWARE =================
@@ -216,6 +220,8 @@ server.post('/predict-wind', isAuth, (req, res) => {
 });
 
 // ================= SERVER =================
-server.listen(3000, () => {
-    console.log("Server: http://localhost:3000");
+const PORT = process.env.PORT || 3000;
+
+server.listen(PORT, () => {
+    console.log("Server running on port", PORT);
 });
