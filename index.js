@@ -152,8 +152,8 @@ server.get('/logout', (req, res) => {
 });
 
 // ================= CONTACT =================
-server.post('/contact-submit', isAuth, (req, res) => {
-    const { message } = req.body;
+server.post('/contact-submit', isAuth, async (req, res) => {
+    const { name, email, message } = req.body;
 
     if (!message || message.trim() === "") {
         return res.send(`
@@ -164,29 +164,20 @@ server.post('/contact-submit', isAuth, (req, res) => {
         `);
     }
 
-    fs.readFile('contact.txt', 'utf-8', (err, data) => {
-        let contacts = [];
-
-        if (!err && data) {
-            try {
-                contacts = JSON.parse(data);
-            } catch {}
-        }
-
-        contacts.push(req.body);
-
-        fs.writeFile('contact.txt', JSON.stringify(contacts, null, 2), (err) => {
-            if (err) console.log(err);
-            else {
-                res.send(`
-                    <script>
-                        alert("Message submitted!");
-                        window.location.href = "/contact";
-                    </script>
-                `);
-            }
+    try {
+        await prisma.contact.create({
+            data: { name, email, message }
         });
-    });
+
+        res.send(`
+            <script>
+                alert("Message submitted!");
+                window.location.href = "/contact";
+            </script>
+        `);
+    } catch (err) {
+        console.log(err);
+    }
 });
 
 // ================= ENERGY =================
