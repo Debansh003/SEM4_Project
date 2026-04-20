@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login — EnergyPredict</title>
+  <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous">
-  <link rel="stylesheet" href="/static/style.css">
-<script src="/static/theme.js"></script>
+  <script src="/theme.js"></script>
 </head>
 <body>
 
@@ -35,19 +35,24 @@
           <input type="email" name="email" placeholder="you@example.com" required autocomplete="email">
         </div>
       </div>
+
       <div class="form-group">
-        <label><i class="fa fa-key"></i> Password</label>
-        <div class="input-wrap">
-          <i class="fa fa-key"></i>
-          <input type="password" name="password" placeholder="••••••••" required>
+        <label><i class="fa fa-lock"></i> Password</label>
+        <div class="input-wrap pw-wrap">
+          <i class="fa fa-lock"></i>
+          <input type="password" name="password" id="loginPw" placeholder="Your password" required autocomplete="current-password">
+          <button type="button" class="pw-toggle" onclick="togglePw('loginPw','loginEye')" tabindex="-1">
+            <i class="fa fa-eye" id="loginEye"></i>
+          </button>
         </div>
       </div>
+
       <button type="submit" class="btn btn-primary btn-full">
         <i class="fa fa-arrow-right-to-bracket"></i> Sign In
       </button>
     </form>
 
-    <div class="divider">password needed</div>
+    <div class="divider">new here?</div>
 
     <div class="auth-footer">
       Don't have an account? <a href="/signup">Create one</a>
@@ -62,24 +67,11 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js" crossorigin="anonymous"></script>
-
 <script>
-particlesJS('particles-js', {
-  particles: {
-    number: { value: 45 }, color: { value: '#00d4ff' }, shape: { type: 'circle' },
-    opacity: { value: 0.15, random: true }, size: { value: 1.8, random: true },
-    line_linked: { enable: true, distance: 120, color: '#00d4ff', opacity: 0.07, width: 1 },
-    move: { enable: true, speed: 0.65, random: true, out_mode: 'out' }
-  },
-  interactivity: { detect_on: 'canvas', events: { onhover: { enable: true, mode: 'grab' } } }
-});
-
-document.addEventListener('mousemove', e => {
-  const g = document.getElementById('cursor-glow');
-  if (g) { g.style.left = e.clientX + 'px'; g.style.top = e.clientY + 'px'; }
-});
-
-gsap.from('.auth-card', { y: 30, opacity: 0, duration: 0.8, ease: 'power3.out' });
+particlesJS('particles-js',{particles:{number:{value:45},color:{value:'#00d4ff'},shape:{type:'circle'},opacity:{value:0.15,random:true},size:{value:1.8,random:true},line_linked:{enable:true,distance:120,color:'#00d4ff',opacity:0.07,width:1},move:{enable:true,speed:0.65,random:true,out_mode:'out'}},interactivity:{detect_on:'canvas',events:{onhover:{enable:true,mode:'grab'}}}});
+document.addEventListener('mousemove',e=>{const g=document.getElementById('cursor-glow');if(g){g.style.left=e.clientX+'px';g.style.top=e.clientY+'px';}});
+gsap.from('.auth-card',{y:30,opacity:0,duration:0.8,ease:'power3.out'});
+function togglePw(id,eyeId){const i=document.getElementById(id),e=document.getElementById(eyeId),s=i.type==='password';i.type=s?'text':'password';e.className=s?'fa fa-eye-slash':'fa fa-eye';}
 </script>
 </body>
 </html>

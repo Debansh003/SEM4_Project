@@ -4,10 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Contact — EnergyPredict</title>
+  <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" crossorigin="anonymous">
-  <link rel="stylesheet" href="/static/style.css">
-<script src="/static/theme.js"></script>
+  <script src="/theme.js"></script>
 </head>
 <body>
 
@@ -26,8 +26,7 @@
     <a href="/">Home</a>
     <a href="/about">About</a>
     <a href="/contact" class="active">Contact</a>
-    <a href="/login">Login</a>
-    <a href="/signup" class="nav-cta">Signup</a>
+    <a href="/logout" class="nav-logout"><i class="fa fa-right-from-bracket"></i> Logout</a>
     <button onclick="toggleTheme()" id="themeBtn" title="Toggle theme">🌙</button>
   </div>
 </nav>
@@ -41,24 +40,11 @@
   </div>
 
   <div class="card" data-aos="fade-up" data-aos-duration="700" data-aos-delay="100">
-
     <div class="contact-meta">
-      <div class="meta-item">
-        <div class="meta-icon"><i class="fa fa-bolt" style="color:var(--accent)"></i></div>
-        <span>EnergyPredict</span>
-      </div>
-      <div class="meta-item">
-        <div class="meta-icon"><i class="fa fa-leaf" style="color:var(--green)"></i></div>
-        <span>Renewable Energy Tools</span>
-      </div>
-      <div class="meta-item">
-        <div class="meta-icon"><i class="fa fa-code" style="color:var(--gold)"></i></div>
-        <span>Open Source Project</span>
-      </div>
-      <div class="meta-item">
-        <div class="meta-icon"><i class="fa fa-globe" style="color:var(--accent2)"></i></div>
-        <span>Built with Node.js</span>
-      </div>
+      <div class="meta-item"><div class="meta-icon"><i class="fa fa-bolt" style="color:var(--accent)"></i></div><span>EnergyPredict</span></div>
+      <div class="meta-item"><div class="meta-icon"><i class="fa fa-leaf" style="color:var(--green)"></i></div><span>Renewable Energy Tools</span></div>
+      <div class="meta-item"><div class="meta-icon"><i class="fa fa-code" style="color:var(--gold)"></i></div><span>Open Source Project</span></div>
+      <div class="meta-item"><div class="meta-icon"><i class="fa fa-globe" style="color:var(--accent2)"></i></div><span>Built with Node.js</span></div>
     </div>
 
     <div class="section-label">Send a Message</div>
@@ -67,73 +53,39 @@
       <div class="form-row">
         <div class="form-group">
           <label><i class="fa fa-user"></i> Name</label>
-          <div class="input-wrap">
-            <i class="fa fa-user"></i>
-            <input type="text" name="name" placeholder="Jane Smith" required>
-          </div>
+          <div class="input-wrap"><i class="fa fa-user"></i>
+            <input type="text" name="name" placeholder="Jane Smith" required></div>
         </div>
         <div class="form-group">
           <label><i class="fa fa-envelope"></i> Email</label>
-          <div class="input-wrap">
-            <i class="fa fa-envelope"></i>
-            <input type="email" name="email" placeholder="you@example.com" required>
-          </div>
+          <div class="input-wrap"><i class="fa fa-envelope"></i>
+            <input type="email" name="email" placeholder="you@example.com" required></div>
         </div>
       </div>
       <div class="form-group">
         <label><i class="fa fa-comment"></i> Message</label>
         <textarea name="message" placeholder="Tell us what's on your mind..." required></textarea>
       </div>
-      <button type="submit" class="btn btn-primary btn-full" id="submitBtn">
+      <button type="submit" class="btn btn-primary btn-full">
         <i class="fa fa-paper-plane"></i> Send Message
       </button>
     </form>
-
   </div>
 
 </div>
 
-<div id="toast"><span id="toast-icon">✅</span> <span id="toast-msg">Message sent!</span></div>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js" crossorigin="anonymous"></script>
-
 <script>
-AOS.init({ once: true, offset: 30 });
+AOS.init({once:true,offset:30});
+particlesJS('particles-js',{particles:{number:{value:40},color:{value:'#00d4ff'},shape:{type:'circle'},opacity:{value:0.14,random:true},size:{value:1.8,random:true},line_linked:{enable:true,distance:115,color:'#00d4ff',opacity:0.07,width:1},move:{enable:true,speed:0.6,random:true,out_mode:'out'}},interactivity:{detect_on:'canvas',events:{onhover:{enable:true,mode:'grab'}}}});
+document.addEventListener('mousemove',e=>{const g=document.getElementById('cursor-glow');if(g){g.style.left=e.clientX+'px';g.style.top=e.clientY+'px';}});
+window.addEventListener('scroll',()=>{document.getElementById('navbar').classList.toggle('scrolled',window.scrollY>20);});
+gsap.from('#navbar',{y:-20,opacity:0,duration:0.7,ease:'power3.out'});
 
-particlesJS('particles-js', {
-  particles: {
-    number: { value: 40 }, color: { value: '#00d4ff' }, shape: { type: 'circle' },
-    opacity: { value: 0.14, random: true }, size: { value: 1.8, random: true },
-    line_linked: { enable: true, distance: 115, color: '#00d4ff', opacity: 0.07, width: 1 },
-    move: { enable: true, speed: 0.6, random: true, out_mode: 'out' }
-  },
-  interactivity: { detect_on: 'canvas', events: { onhover: { enable: true, mode: 'grab' } } }
-});
-
-document.addEventListener('mousemove', e => {
-  const g = document.getElementById('cursor-glow');
-  if (g) { g.style.left = e.clientX + 'px'; g.style.top = e.clientY + 'px'; }
-});
-
-window.addEventListener('scroll', () => {
-  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 20);
-});
-
-gsap.from('#navbar', { y: -20, opacity: 0, duration: 0.7, ease: 'power3.out' });
-
-/* Character counter for textarea */
-const ta = document.querySelector('textarea[name="message"]');
-if (ta) {
-  ta.addEventListener('input', () => {
-    const len = ta.value.length;
-    let hint = ta.parentElement.querySelector('.input-hint');
-    if (!hint) { hint = document.createElement('div'); hint.className = 'input-hint'; ta.parentElement.appendChild(hint); }
-    hint.textContent = `${len} character${len !== 1 ? 's' : ''}`;
-    hint.style.color = len > 10 ? 'var(--green)' : 'var(--text-dim)';
-  });
-}
+const ta=document.querySelector('textarea[name="message"]');
+if(ta){ta.addEventListener('input',()=>{const len=ta.value.length;let h=ta.parentElement.querySelector('.input-hint');if(!h){h=document.createElement('div');h.className='input-hint';ta.parentElement.appendChild(h);}h.textContent=`${len} character${len!==1?'s':''}`;h.style.color=len>10?'var(--green)':'var(--text-dim)';});}
 </script>
 </body>
 </html>

@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Signup — EnergyPredict</title>
+  <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous">
-  <link rel="stylesheet" href="/static/style.css">
-<script src="/static/theme.js"></script>
+  <script src="/theme.js"></script>
 </head>
 <body>
 
@@ -27,7 +27,7 @@
 
     <div class="section-label">New Account</div>
 
-    <form action="/signup-submit" method="POST">
+    <form action="/signup-submit" method="POST" id="signupForm">
       <div class="form-group">
         <label><i class="fa fa-user"></i> Full Name</label>
         <div class="input-wrap">
@@ -35,6 +35,7 @@
           <input type="text" name="name" placeholder="Jane Smith" required autocomplete="name">
         </div>
       </div>
+
       <div class="form-group">
         <label><i class="fa fa-envelope"></i> Email Address</label>
         <div class="input-wrap">
@@ -42,14 +43,36 @@
           <input type="email" name="email" placeholder="you@example.com" required autocomplete="email">
         </div>
       </div>
+
       <div class="form-group">
-        <label><i class="fa fa-key"></i> Password</label>
-        <div class="input-wrap">
-          <i class="fa fa-key"></i>
-          <input type="password" name="password" placeholder="••••••••" required>
+        <label><i class="fa fa-lock"></i> Password</label>
+        <div class="input-wrap pw-wrap">
+          <i class="fa fa-lock"></i>
+          <input type="password" name="password" id="pw1" placeholder="Min. 6 characters" required autocomplete="new-password" minlength="6">
+          <button type="button" class="pw-toggle" onclick="togglePw('pw1','eye1')" tabindex="-1">
+            <i class="fa fa-eye" id="eye1"></i>
+          </button>
         </div>
+        <!-- strength bar -->
+        <div id="strengthBar" style="height:3px;border-radius:3px;margin-top:7px;background:var(--surface3);overflow:hidden">
+          <div id="strengthFill" style="height:100%;width:0;border-radius:3px;transition:width 0.3s,background 0.3s"></div>
+        </div>
+        <div id="strengthLabel" class="input-hint"></div>
       </div>
-      <button type="submit" class="btn btn-primary btn-full">
+
+      <div class="form-group">
+        <label><i class="fa fa-shield-halved"></i> Confirm Password</label>
+        <div class="input-wrap pw-wrap">
+          <i class="fa fa-shield-halved"></i>
+          <input type="password" id="pw2" placeholder="Repeat password" required autocomplete="new-password">
+          <button type="button" class="pw-toggle" onclick="togglePw('pw2','eye2')" tabindex="-1">
+            <i class="fa fa-eye" id="eye2"></i>
+          </button>
+        </div>
+        <div id="matchHint" class="input-hint"></div>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-full" id="submitBtn">
         <i class="fa fa-user-plus"></i> Create Account
       </button>
     </form>
@@ -69,24 +92,45 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js" crossorigin="anonymous"></script>
-
 <script>
-particlesJS('particles-js', {
-  particles: {
-    number: { value: 45 }, color: { value: '#00d4ff' }, shape: { type: 'circle' },
-    opacity: { value: 0.15, random: true }, size: { value: 1.8, random: true },
-    line_linked: { enable: true, distance: 120, color: '#00d4ff', opacity: 0.07, width: 1 },
-    move: { enable: true, speed: 0.65, random: true, out_mode: 'out' }
-  },
-  interactivity: { detect_on: 'canvas', events: { onhover: { enable: true, mode: 'grab' } } }
+particlesJS('particles-js',{particles:{number:{value:45},color:{value:'#00d4ff'},shape:{type:'circle'},opacity:{value:0.15,random:true},size:{value:1.8,random:true},line_linked:{enable:true,distance:120,color:'#00d4ff',opacity:0.07,width:1},move:{enable:true,speed:0.65,random:true,out_mode:'out'}},interactivity:{detect_on:'canvas',events:{onhover:{enable:true,mode:'grab'}}}});
+document.addEventListener('mousemove',e=>{const g=document.getElementById('cursor-glow');if(g){g.style.left=e.clientX+'px';g.style.top=e.clientY+'px';}});
+gsap.from('.auth-card',{y:30,opacity:0,duration:0.8,ease:'power3.out'});
+
+function togglePw(id,eyeId){const i=document.getElementById(id),e=document.getElementById(eyeId),s=i.type==='password';i.type=s?'text':'password';e.className=s?'fa fa-eye-slash':'fa fa-eye';}
+
+/* ── Password strength ── */
+const pw1=document.getElementById('pw1');
+const fill=document.getElementById('strengthFill');
+const label=document.getElementById('strengthLabel');
+pw1.addEventListener('input',()=>{
+  const v=pw1.value;let score=0;
+  if(v.length>=6) score++;
+  if(v.length>=10) score++;
+  if(/[A-Z]/.test(v)) score++;
+  if(/[0-9]/.test(v)) score++;
+  if(/[^A-Za-z0-9]/.test(v)) score++;
+  const pct=[0,20,40,65,85,100][score];
+  const colors=['','#ff6b6b','#f5a623','#f5a623','#00d4ff','#00e5a0'][score];
+  const words=['','Too short','Weak','Fair','Good','Strong'][score];
+  fill.style.width=pct+'%'; fill.style.background=colors;
+  label.textContent=v.length?words:''; label.style.color=colors;
 });
 
-document.addEventListener('mousemove', e => {
-  const g = document.getElementById('cursor-glow');
-  if (g) { g.style.left = e.clientX + 'px'; g.style.top = e.clientY + 'px'; }
+/* ── Confirm match ── */
+const pw2=document.getElementById('pw2');
+const matchHint=document.getElementById('matchHint');
+pw2.addEventListener('input',()=>{
+  if(!pw2.value){matchHint.textContent='';return;}
+  const ok=pw1.value===pw2.value;
+  matchHint.textContent=ok?'✓ Passwords match':'✗ Passwords do not match';
+  matchHint.style.color=ok?'var(--green)':'var(--warn, #ff6b6b)';
 });
 
-gsap.from('.auth-card', { y: 30, opacity: 0, duration: 0.8, ease: 'power3.out' });
+/* ── Prevent submit if no match ── */
+document.getElementById('signupForm').addEventListener('submit',e=>{
+  if(pw1.value!==pw2.value){e.preventDefault();alert('Passwords do not match.');}
+});
 </script>
 </body>
 </html>

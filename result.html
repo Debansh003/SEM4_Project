@@ -4,10 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Result — EnergyPredict</title>
+  <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" crossorigin="anonymous">
-  <link rel="stylesheet" href="/static/style.css">
-<script src="/static/theme.js"></script>
+  <script src="/theme.js"></script>
 </head>
 <body>
 
@@ -26,6 +26,7 @@
     <a href="/">Home</a>
     <a href="/about">About</a>
     <a href="/contact">Contact</a>
+    <a href="/logout" class="nav-logout"><i class="fa fa-right-from-bracket"></i> Logout</a>
     <button onclick="toggleTheme()" id="themeBtn" title="Toggle theme">🌙</button>
   </div>
 </nav>
@@ -40,14 +41,11 @@
 
   <div class="card" data-aos="fade-up" data-aos-duration="700" data-aos-delay="100">
     <div class="section-label">Daily Output</div>
-
     <div class="result-display">
       <div class="result-number" id="energyVal">--</div>
       <div class="result-unit">kWh / day</div>
     </div>
-
     <div class="result-bar-track"><div class="result-bar-fill"></div></div>
-
     <div class="result-stats-grid">
       <div class="stat-card">
         <div class="stat-value count-up" id="monthly-val" data-target="0" data-suffix="">0</div>
@@ -62,13 +60,8 @@
         <div class="stat-label">kg CO₂ / Year Saved</div>
       </div>
     </div>
-
-    <!-- CHART -->
     <div class="section-label">12-Month Projection</div>
-    <div class="chart-wrap">
-      <canvas id="energyChart"></canvas>
-    </div>
-
+    <div class="chart-wrap"><canvas id="energyChart"></canvas></div>
     <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:20px;position:relative;z-index:1">
       <a href="/" class="btn btn-primary"><i class="fa fa-rotate-left"></i> Calculate Again</a>
       <a href="/about" class="btn btn-ghost"><i class="fa fa-book-open"></i> Learn More</a>
@@ -77,130 +70,47 @@
 
 </div>
 
-<!-- CDN SCRIPTS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" crossorigin="anonymous"></script>
-
 <script>
-AOS.init({ once: true, offset: 30 });
+AOS.init({once:true,offset:30});
+particlesJS('particles-js',{particles:{number:{value:40},color:{value:'#00d4ff'},shape:{type:'circle'},opacity:{value:0.14,random:true},size:{value:1.8,random:true},line_linked:{enable:true,distance:120,color:'#00d4ff',opacity:0.06,width:1},move:{enable:true,speed:0.6,random:true,out_mode:'out'}},interactivity:{detect_on:'canvas',events:{onhover:{enable:true,mode:'grab'}}}});
+document.addEventListener('mousemove',e=>{const g=document.getElementById('cursor-glow');if(g){g.style.left=e.clientX+'px';g.style.top=e.clientY+'px';}});
+window.addEventListener('scroll',()=>{document.getElementById('navbar').classList.toggle('scrolled',window.scrollY>20);});
+gsap.from('#navbar',{y:-20,opacity:0,duration:0.7,ease:'power3.out'});
 
-/* Particles */
-particlesJS('particles-js', {
-  particles: {
-    number: { value: 40 }, color: { value: '#00d4ff' }, shape: { type: 'circle' },
-    opacity: { value: 0.14, random: true }, size: { value: 1.8, random: true },
-    line_linked: { enable: true, distance: 120, color: '#00d4ff', opacity: 0.06, width: 1 },
-    move: { enable: true, speed: 0.6, random: true, out_mode: 'out' }
-  },
-  interactivity: { detect_on: 'canvas', events: { onhover: { enable: true, mode: 'grab' } } }
-});
-
-/* Cursor glow */
-document.addEventListener('mousemove', e => {
-  const g = document.getElementById('cursor-glow');
-  if (g) { g.style.left = e.clientX + 'px'; g.style.top = e.clientY + 'px'; }
-});
-
-/* Navbar scroll */
-window.addEventListener('scroll', () => {
-  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 20);
-});
-
-/* Data */
-const params  = new URLSearchParams(window.location.search);
-const energy  = parseFloat(params.get('energy'));
-const monthly = energy * 30;
-const annual  = energy * 365;
-const co2     = annual  * 0.453;
-
-/* Display */
-if (!isNaN(energy)) {
-  document.getElementById('energyVal').textContent = energy.toFixed(2);
-
-  /* count-up targets */
-  document.getElementById('monthly-val').dataset.target = monthly.toFixed(1);
-  document.getElementById('annual-val').dataset.target  = annual.toFixed(0);
-  document.getElementById('co2-val').dataset.target     = co2.toFixed(0);
-
-  /* GSAP entrance */
-  gsap.from('#energyVal', { scale: 0.6, opacity: 0, duration: 1, ease: 'elastic.out(1,0.5)', delay: 0.3 });
+const params=new URLSearchParams(window.location.search);
+const energy=parseFloat(params.get('energy'));
+const monthly=energy*30, annual=energy*365, co2=annual*0.453;
+if(!isNaN(energy)){
+  document.getElementById('energyVal').textContent=energy.toFixed(2);
+  document.getElementById('monthly-val').dataset.target=monthly.toFixed(1);
+  document.getElementById('annual-val').dataset.target=annual.toFixed(0);
+  document.getElementById('co2-val').dataset.target=co2.toFixed(0);
+  gsap.from('#energyVal',{scale:0.6,opacity:0,duration:1,ease:'elastic.out(1,0.5)',delay:0.3});
 } else {
-  document.getElementById('energyVal').textContent = 'N/A';
+  document.getElementById('energyVal').textContent='N/A';
 }
 
-/* Count-up */
-function animateCountUp(el) {
-  const target   = parseFloat(el.dataset.target);
-  const suffix   = el.dataset.suffix || '';
-  const isFloat  = target % 1 !== 0;
-  const duration = 1600;
-  const start    = performance.now();
-  function step(now) {
-    const p = Math.min((now - start) / duration, 1);
-    el.textContent = (isFloat ? (p * target).toFixed(1) : Math.floor(p * target)) + suffix;
-    if (p < 1) requestAnimationFrame(step);
-    else el.textContent = target + suffix;
-  }
+function animateCountUp(el){
+  const target=parseFloat(el.dataset.target),suffix=el.dataset.suffix||'',isFloat=target%1!==0,duration=1600,start=performance.now();
+  function step(now){const p=Math.min((now-start)/duration,1);el.textContent=(isFloat?(p*target).toFixed(1):Math.floor(p*target))+suffix;if(p<1)requestAnimationFrame(step);else el.textContent=target+suffix;}
   requestAnimationFrame(step);
 }
+const io=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){animateCountUp(e.target);io.unobserve(e.target);}});},{threshold:0.5});
+document.querySelectorAll('.count-up').forEach(el=>io.observe(el));
 
-const io = new IntersectionObserver(entries => {
-  entries.forEach(e => { if (e.isIntersecting) { animateCountUp(e.target); io.unobserve(e.target); } });
-}, { threshold: 0.5 });
-document.querySelectorAll('.count-up').forEach(el => io.observe(el));
-
-/* Chart.js 12-month bar chart */
-const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-const seasonalFactor = [0.72,0.80,0.95,1.06,1.12,1.15,1.14,1.10,1.02,0.90,0.78,0.70];
-const monthlyData    = seasonalFactor.map(f => parseFloat((energy * f * 30).toFixed(1)));
-
-const isDark = document.body.getAttribute('data-theme') !== 'light';
-const gridColor  = isDark ? 'rgba(0,212,255,0.07)' : 'rgba(0,153,204,0.1)';
-const labelColor = isDark ? '#5a7a99' : '#4a6a88';
-
-const ctx = document.getElementById('energyChart').getContext('2d');
-
-const grad = ctx.createLinearGradient(0, 0, 0, 220);
-grad.addColorStop(0,   'rgba(0,212,255,0.6)');
-grad.addColorStop(1,   'rgba(0,229,160,0.1)');
-
-new Chart(ctx, {
-  type: 'bar',
-  data: {
-    labels: months,
-    datasets: [{
-      label: 'kWh',
-      data: monthlyData,
-      backgroundColor: grad,
-      borderColor:    'rgba(0,212,255,0.7)',
-      borderWidth: 1.5,
-      borderRadius: 6,
-      borderSkipped: false
-    }]
-  },
-  options: {
-    responsive: true,
-    maintainAspectRatio: false,
-    animation: { duration: 1400, easing: 'easeOutQuart', delay: ctx => ctx.dataIndex * 60 },
-    plugins: {
-      legend: { display: false },
-      tooltip: {
-        backgroundColor: 'rgba(10,21,37,0.95)',
-        borderColor: 'rgba(0,212,255,0.25)', borderWidth: 1,
-        titleColor: '#00d4ff', bodyColor: '#ddeeff', padding: 12,
-        callbacks: { label: c => ` ${c.parsed.y} kWh` }
-      }
-    },
-    scales: {
-      x: { grid: { color: gridColor, drawTicks: false }, ticks: { color: labelColor, font: { family: 'JetBrains Mono', size: 11 } } },
-      y: { grid: { color: gridColor, drawTicks: false }, ticks: { color: labelColor, font: { family: 'JetBrains Mono', size: 11 } } }
-    }
-  }
-});
-
-gsap.from('#navbar', { y: -20, opacity: 0, duration: 0.7, ease: 'power3.out' });
+const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const sf=[0.72,0.80,0.95,1.06,1.12,1.15,1.14,1.10,1.02,0.90,0.78,0.70];
+const mData=sf.map(f=>parseFloat((energy*f*30).toFixed(1)));
+const ctx=document.getElementById('energyChart').getContext('2d');
+const grad=ctx.createLinearGradient(0,0,0,220);
+grad.addColorStop(0,'rgba(0,212,255,0.6)'); grad.addColorStop(1,'rgba(0,229,160,0.1)');
+const isDark=document.body.getAttribute('data-theme')!=='light';
+const gc=isDark?'rgba(0,212,255,0.07)':'rgba(0,153,204,0.1)', lc=isDark?'#5a7a99':'#4a6a88';
+new Chart(ctx,{type:'bar',data:{labels:months,datasets:[{label:'kWh',data:mData,backgroundColor:grad,borderColor:'rgba(0,212,255,0.7)',borderWidth:1.5,borderRadius:6,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,animation:{duration:1400,easing:'easeOutQuart',delay:ctx=>ctx.dataIndex*60},plugins:{legend:{display:false},tooltip:{backgroundColor:'rgba(10,21,37,0.95)',borderColor:'rgba(0,212,255,0.25)',borderWidth:1,titleColor:'#00d4ff',bodyColor:'#ddeeff',padding:12,callbacks:{label:c=>` ${c.parsed.y} kWh`}}},scales:{x:{grid:{color:gc,drawTicks:false},ticks:{color:lc,font:{family:'JetBrains Mono',size:11}}},y:{grid:{color:gc,drawTicks:false},ticks:{color:lc,font:{family:'JetBrains Mono',size:11}}}}}});
 </script>
 </body>
 </html>

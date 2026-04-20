@@ -4,6 +4,11 @@
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
+// ============================================================
+//  schema.prisma  —  paste this into your prisma/schema.prisma
+//  Then run:  npx prisma migrate dev --name add_password_and_contact
+// ============================================================
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,17 +18,25 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
+// ----- User table (password field added) --------------------
 model User {
-  id       Int    @id @default(autoincrement())
-  name     String
-  email    String @unique
-  password String
+  id        Int       @id @default(autoincrement())
+  name      String
+  email     String    @unique
+  password  String
+  createdAt DateTime  @default(now())
+
+  contacts  Contact[]
 }
 
+// ----- Contact table (new) ----------------------------------
 model Contact {
-  id      Int    @id @default(autoincrement())
-  name    String
-  email   String
-  message String
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String
+  message   String
+  createdAt DateTime @default(now())
+
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
 }
