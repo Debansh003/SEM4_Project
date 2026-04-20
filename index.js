@@ -2,6 +2,8 @@ import express from 'express';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import fs from 'fs';
+import session from 'express-session';
+import bcrypt from 'bcrypt';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
@@ -12,19 +14,31 @@ const __dirname = path.dirname(__filename);
 
 // ================= MIDDLEWARE =================
 server.use(express.urlencoded({ extended: false }));
-server.use(express.static(__dirname));
+server.use('/static', express.static(__dirname));
 
-// ================= AUTH =================
+// ✅ SESSION
+server.use(session({
+    secret: 'supersecretkey',
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: true } // true only in HTTPS
+}));
+
+// ================= AUTH MIDDLEWARE =================
 function isAuth(req, res, next) {
-    if (req.query.user) next();
+    if (req.session.user) next();
     else res.redirect('/login');
 }
 
 // ================= ROUTES =================
 
 // 🔒 PROTECTED
-server.get('/', isAuth, (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+server.get('/', (req, res) => {
+    if (req.session.user) {
+        res.sendFile(path.join(__dirname, 'index.html')); // dashboard
+    } else {
+        res.redirect('/login'); // force login first
+    }
 });
 
 server.get('/about', isAuth, (req, res) => {
@@ -46,7 +60,7 @@ server.get('/signup', (req, res) => {
 
 // ================= SIGNUP =================
 server.post('/signup-submit', async (req, res) => {
-    const { name, email } = req.body;
+    const { name, email, password } = req.body;
 
     try {
         const exists = await prisma.user.findUnique({ where: { email } });
@@ -60,12 +74,21 @@ server.post('/signup-submit', async (req, res) => {
             `);
         }
 
-        await prisma.user.create({ data: { name, email } });
+        // 🔐 HASH PASSWORD
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        await prisma.user.create({
+            data: {
+                name,
+                email,
+                password: hashedPassword
+            }
+        });
 
         res.send(`
             <script>
                 alert("Signup successful!");
-                window.location.href = "/?user=${email}";
+                window.location.href = "/login";
             </script>
         `);
 
@@ -76,7 +99,7 @@ server.post('/signup-submit', async (req, res) => {
 
 // ================= LOGIN =================
 server.post('/login-submit', async (req, res) => {
-    const { email } = req.body;
+    const { email, password } = req.body;
 
     try {
         const user = await prisma.user.findUnique({ where: { email } });
@@ -90,10 +113,25 @@ server.post('/login-submit', async (req, res) => {
             `);
         }
 
+        // 🔐 CHECK PASSWORD
+        const match = await bcrypt.compare(password, user.password);
+
+        if (!match) {
+            return res.send(`
+                <script>
+                    alert("Wrong password!");
+                    window.location.href = "/login";
+                </script>
+            `);
+        }
+
+        // ✅ STORE SESSION
+        req.session.user = user;
+
         res.send(`
             <script>
                 alert("Login successful!");
-                window.location.href = "/?user=${email}";
+                window.location.href = "/";
             </script>
         `);
 
@@ -102,8 +140,15 @@ server.post('/login-submit', async (req, res) => {
     }
 });
 
+// ================= LOGOUT =================
+server.get('/logout', (req, res) => {
+    req.session.destroy(() => {
+        res.redirect('/login');
+    });
+});
+
 // ================= CONTACT =================
-server.post('/contact-submit', (req, res) => {
+server.post('/contact-submit', isAuth, (req, res) => {
     const { message } = req.body;
 
     if (!message || message.trim() === "") {
@@ -132,7 +177,7 @@ server.post('/contact-submit', (req, res) => {
                 res.send(`
                     <script>
                         alert("Message submitted!");
-                        window.location.href = "/contact?user=${req.query.user}";
+                        window.location.href = "/contact";
                     </script>
                 `);
             }
@@ -152,7 +197,7 @@ server.post('/predict', isAuth, (req, res) => {
         parseFloat(irradiance) *
         parseFloat(pr);
 
-    res.redirect(`/result.html?energy=${energy}&user=${req.query.user}`);
+    res.redirect(`/result.html?energy=${energy}`);
 });
 
 // 🌬️ WIND
@@ -167,7 +212,7 @@ server.post('/predict-wind', isAuth, (req, res) => {
         parseFloat(cp) *
         parseFloat(efficiency);
 
-    res.redirect(`/result.html?energy=${energy}&user=${req.query.user}`);
+    res.redirect(`/result.html?energy=${energy}`);
 });
 
 // ================= SERVER =================
