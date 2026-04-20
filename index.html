@@ -1,64 +1,154 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>EnergyPredict</title>
-
-    <link rel="stylesheet" href="style.css">
-
-    <script src="/theme.js"></script>
-    <script src="/auth.js" defer></script>
-
-    <script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EnergyPredict — Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="/theme.js"></script>
+  <script src="/auth.js" defer></script>
 </head>
 <body>
 
-<div id="particles-js"></div>
-
+<!-- NAV -->
 <nav>
+  <a href="/" class="nav-brand">
+    <div class="nav-brand-icon">⚡</div>
     <h2>EnergyPredict</h2>
-    <div>
-        <a href="/">Home</a>
-        <a href="/about">About</a>
-        <a href="/contact">Contact</a>
-        <a href="/login">Login</a>
-        <a href="/signup">Signup</a>
-        <button onclick="toggleTheme()" id="themeBtn">🌙</button>
-    </div>
+  </a>
+  <div class="nav-links">
+    <a href="/" class="active">Home</a>
+    <a href="/about">About</a>
+    <a href="/contact">Contact</a>
+    <a href="/login">Login</a>
+    <a href="/signup" class="nav-cta">Signup</a>
+    <button onclick="toggleTheme()" id="themeBtn" title="Toggle theme">🌙</button>
+  </div>
 </nav>
 
-<div class="hero">
-    <h1>Wind & Solar Energy Prediction</h1>
-</div>
+<div class="page">
 
-<div class="card">
-    <h2>Solar Energy Prediction</h2>
+  <!-- HERO -->
+  <div class="hero fade-in">
+    <div class="hero-eyebrow">🔋 Renewable Energy Calculator</div>
+    <h1>Predict Your <span>Energy Output</span></h1>
+    <p>Estimate daily energy generation from solar panels or wind turbines using precise physical models.</p>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row fade-in">
+    <div class="stat-item">
+      <div class="stat-value">99.2%</div>
+      <div class="stat-label">Accuracy</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-value">2</div>
+      <div class="stat-label">Energy Types</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-value">kWh</div>
+      <div class="stat-label">Output Unit</div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="energy-tabs fade-in">
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('solar', this)">
+        ☀️ Solar Energy
+      </button>
+      <button class="tab-btn" onclick="switchTab('wind', this)">
+        🌬️ Wind Energy
+      </button>
+    </div>
+  </div>
+
+  <!-- SOLAR CARD -->
+  <div class="card fade-in" id="panel-solar" style="display:block">
+    <div class="card-icon">☀️</div>
+    <div class="section-label">Solar Panel Calculator</div>
 
     <form action="/predict" method="POST">
-        <input type="number" name="area" placeholder="Area (m²) (Avg: 10–20)" required>
-        <input type="number" name="efficiency" placeholder="Efficiency (0.15–0.22)" required>
-        <input type="number" name="irradiance" placeholder="Irradiance (4–6)" required>
-        <input type="number" name="pr" placeholder="PR (0.75–0.9)" required>
-        <button type="submit">Calculate</button>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="area">Panel Area</label>
+          <input type="number" name="area" id="area" placeholder="e.g. 10" step="any" required>
+          <div class="input-hint">m²</div>
+        </div>
+        <div class="form-group">
+          <label for="efficiency">Efficiency</label>
+          <input type="number" name="efficiency" id="efficiency" placeholder="e.g. 0.20" step="any" required>
+          <div class="input-hint">0 – 1 (20% = 0.20)</div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="irradiance">Solar Irradiance</label>
+          <input type="number" name="irradiance" id="irradiance" placeholder="e.g. 5" step="any" required>
+          <div class="input-hint">kWh/m²/day</div>
+        </div>
+        <div class="form-group">
+          <label for="pr">Performance Ratio</label>
+          <input type="number" name="pr" id="pr" placeholder="e.g. 0.75" step="any" required>
+          <div class="input-hint">Typical: 0.70 – 0.85</div>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary btn-full">
+        Calculate Solar Output →
+      </button>
     </form>
-</div>
+  </div>
 
-<div class="card">
-    <h2>Wind Energy Prediction</h2>
+  <!-- WIND CARD -->
+  <div class="card fade-in" id="panel-wind" style="display:none">
+    <div class="card-icon">🌬️</div>
+    <div class="section-label">Wind Turbine Calculator</div>
 
     <form action="/predict-wind" method="POST">
-        <input type="number" name="area" placeholder="Rotor Area (10–50)" required>
-        <input type="number" name="airDensity" placeholder="Air Density (1.225)" required>
-        <input type="number" name="velocity" placeholder="Wind Speed (3–12)" required>
-        <input type="number" name="cp" placeholder="Cp (0.3–0.5)" required>
-        <input type="number" name="efficiency" placeholder="Efficiency (0.7–0.9)" required>
-        <button type="submit">Calculate</button>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="area-w">Rotor Swept Area</label>
+          <input type="number" name="area" id="area-w" placeholder="e.g. 78.5" step="any" required>
+          <div class="input-hint">m² (π × r²)</div>
+        </div>
+        <div class="form-group">
+          <label for="airDensity">Air Density</label>
+          <input type="number" name="airDensity" id="airDensity" placeholder="e.g. 1.225" step="any" required>
+          <div class="input-hint">kg/m³ (std: 1.225)</div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="velocity">Wind Speed</label>
+          <input type="number" name="velocity" id="velocity" placeholder="e.g. 7" step="any" required>
+          <div class="input-hint">m/s</div>
+        </div>
+        <div class="form-group">
+          <label for="cp">Power Coefficient (Cp)</label>
+          <input type="number" name="cp" id="cp" placeholder="e.g. 0.45" step="any" required>
+          <div class="input-hint">Max Betz: 0.593</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="efficiency-w">Generator Efficiency</label>
+        <input type="number" name="efficiency" id="efficiency-w" placeholder="e.g. 0.90" step="any" required>
+        <div class="input-hint">0 – 1 (90% = 0.90)</div>
+      </div>
+      <button type="submit" class="btn btn-primary btn-full">
+        Calculate Wind Output →
+      </button>
     </form>
-</div>
+  </div>
+
+</div><!-- /page -->
 
 <script>
-particlesJS("particles-js", {
-  particles: { number: { value: 60 }, size: { value: 3 } }
-});
+function switchTab(type, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('panel-solar').style.display = type === 'solar' ? 'block' : 'none';
+  document.getElementById('panel-wind').style.display  = type === 'wind'  ? 'block' : 'none';
+}
 </script>
 
 </body>

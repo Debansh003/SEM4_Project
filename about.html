@@ -1,50 +1,95 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>About</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About — EnergyPredict</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="/theme.js"></script>
+  <script src="/auth.js" defer></script>
 </head>
 <body>
 
 <nav>
+  <a href="/" class="nav-brand">
+    <div class="nav-brand-icon">⚡</div>
     <h2>EnergyPredict</h2>
-    <div>
-        <a href="/">Home</a>
-        <a href="/about">About</a>
-        <a href="/contact">Contact</a>
-        <a href="/login">Login</a>
-        <a href="/signup">Signup</a>
-    </div>
+  </a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/about" class="active">About</a>
+    <a href="/contact">Contact</a>
+    <a href="/login">Login</a>
+    <a href="/signup" class="nav-cta">Signup</a>
+    <button onclick="toggleTheme()" id="themeBtn" title="Toggle theme">🌙</button>
+  </div>
 </nav>
 
-<div class="hero fade-in">
-    <h1>About Our Project</h1>
-</div>
+<div class="page">
 
-<div class="card fade-in">
-    <h2>Solar Energy</h2>
-    <p>Uses sunlight to generate electricity using photovoltaic panels.</p>
-    <ul>
-        <li>Area</li>
-        <li>Efficiency</li>
-        <li>Irradiance</li>
-        <li>Performance Ratio</li>
-    </ul>
-</div>
+  <div class="hero fade-in">
+    <div class="hero-eyebrow">📖 Documentation</div>
+    <h1>About <span>EnergyPredict</span></h1>
+    <p>Understand the physical models powering our renewable energy calculations.</p>
+  </div>
 
-<div class="card fade-in">
-    <h2>Wind Energy</h2>
-    <p>Uses wind turbines to generate electricity.</p>
-    <ul>
-        <li>Wind speed</li>
-        <li>Air density</li>
-        <li>Turbine efficiency</li>
-    </ul>
-</div>
+  <div class="about-grid">
 
-<div class="card fade-in">
-    <h2>Objective</h2>
-    <p>Promote renewable energy usage and provide easy energy prediction tools.</p>
+    <!-- Solar Card -->
+    <div class="card fade-in" style="margin:0; max-width:100%; width:100%">
+      <div class="card-icon">☀️</div>
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px">
+        <h2 style="margin:0">Solar Energy</h2>
+        <span class="badge badge-solar">Photovoltaic</span>
+      </div>
+      <p>Uses sunlight to generate electricity via photovoltaic panels. The output depends on how much sunlight the panels receive and how efficiently they convert it.</p>
+
+      <div class="formula-box">
+        E = Area × η × Irradiance × PR
+      </div>
+
+      <ul class="feature-list">
+        <li>Area — panel surface in m²</li>
+        <li>η — panel efficiency (0–1)</li>
+        <li>Irradiance — daily solar resource (kWh/m²)</li>
+        <li>PR — performance ratio (0.70–0.85)</li>
+      </ul>
+    </div>
+
+    <!-- Wind Card -->
+    <div class="card fade-in" style="margin:0; max-width:100%; width:100%">
+      <div class="card-icon">🌬️</div>
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px">
+        <h2 style="margin:0">Wind Energy</h2>
+        <span class="badge badge-wind">Turbine</span>
+      </div>
+      <p>Wind turbines extract kinetic energy from moving air. Output scales with the cube of wind speed, so even small speed increases yield large gains.</p>
+
+      <div class="formula-box">
+        P = ½ × ρ × A × v³ × Cp × η
+      </div>
+
+      <ul class="feature-list">
+        <li>ρ — air density (1.225 kg/m³ at sea level)</li>
+        <li>A — rotor swept area (π × r²)</li>
+        <li>v — wind speed (m/s)</li>
+        <li>Cp — power coefficient (max 0.593 Betz)</li>
+        <li>η — generator efficiency</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- Objective card -->
+  <div class="card fade-in">
+    <div class="card-icon">🎯</div>
+    <h2>Our Objective</h2>
+    <p>EnergyPredict exists to make renewable energy planning accessible. Whether you're sizing a rooftop solar array or evaluating a small wind installation, our calculators give you instant, physics-based estimates to inform your decisions.</p>
+    <div style="margin-top:20px">
+      <a href="/" class="btn btn-primary">Try the Calculator →</a>
+    </div>
+  </div>
+
 </div>
 
 </body>

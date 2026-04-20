@@ -1,35 +1,82 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Result</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="/theme.js"></script>
-    <script src="/auth.js" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Result — EnergyPredict</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="/theme.js"></script>
+  <script src="/auth.js" defer></script>
 </head>
 <body>
 
 <nav>
+  <a href="/" class="nav-brand">
+    <div class="nav-brand-icon">⚡</div>
     <h2>EnergyPredict</h2>
-    <button onclick="toggleTheme()" id="themeBtn">🌙</button>
+  </a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/about">About</a>
+    <a href="/contact">Contact</a>
+    <button onclick="toggleTheme()" id="themeBtn" title="Toggle theme">🌙</button>
+  </div>
 </nav>
 
-<div class="hero">
-    <h1>Result</h1>
-</div>
+<div class="page">
 
-<div class="card">
-    <h2 id="energyValue">--</h2>
-    <p>kWh/day</p>
+  <div class="hero fade-in">
+    <div class="hero-eyebrow">✅ Calculation Complete</div>
+    <h1>Your <span>Energy Output</span></h1>
+    <p>Estimated daily generation based on the parameters provided.</p>
+  </div>
 
-    <a href="/">Calculate Again</a>
+  <div class="card fade-in" style="text-align:center">
+    <div class="section-label">Result</div>
+
+    <div class="result-display">
+      <div class="result-value" id="energyValue">--</div>
+      <div class="result-unit">kWh / day</div>
+    </div>
+
+    <div class="result-bar">
+      <div class="result-bar-fill"></div>
+    </div>
+
+    <div class="stats-row" style="width:100%; margin-bottom:28px">
+      <div class="stat-item">
+        <div class="stat-value" id="monthly">--</div>
+        <div class="stat-label">kWh/month</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="annual">--</div>
+        <div class="stat-label">kWh/year</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="co2">--</div>
+        <div class="stat-label">kg CO₂ saved/yr</div>
+      </div>
+    </div>
+
+    <a href="/" class="btn btn-primary">← Calculate Again</a>
+    &nbsp;&nbsp;
+    <a href="/about" class="btn btn-ghost">Learn More</a>
+  </div>
+
 </div>
 
 <script>
-const params = new URLSearchParams(window.location.search);
-const energy = params.get("energy");
+const params   = new URLSearchParams(window.location.search);
+const energy   = parseFloat(params.get("energy"));
 
-document.getElementById("energyValue").innerText =
-    energy ? parseFloat(energy).toFixed(2) : "No Data";
+if (!isNaN(energy)) {
+  document.getElementById("energyValue").innerText = energy.toFixed(2);
+  document.getElementById("monthly").innerText     = (energy * 30).toFixed(1);
+  document.getElementById("annual").innerText      = (energy * 365).toFixed(0);
+  document.getElementById("co2").innerText         = (energy * 365 * 0.453).toFixed(0);
+} else {
+  document.getElementById("energyValue").innerText = "N/A";
+}
 </script>
 
 </body>

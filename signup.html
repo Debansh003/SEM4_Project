@@ -1,29 +1,54 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Signup</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="/theme.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Signup — EnergyPredict</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="/theme.js"></script>
 </head>
 <body>
 
-<div id="particles-js"></div>
+<div class="page">
+  <div class="auth-page">
+    <div class="card auth-card fade-in">
 
-<nav>
-    <h2>EnergyPredict</h2>
-    <button onclick="toggleTheme()" id="themeBtn">🌙</button>
-</nav>
+      <div class="auth-header">
+        <div class="auth-logo">⚡</div>
+        <h1>Create account</h1>
+        <p>Start predicting your renewable energy output</p>
+      </div>
 
-<div class="card">
-    <h2>Signup</h2>
+      <div class="section-label">New account</div>
 
-    <form action="/signup-submit" method="POST">
-        <input type="text" name="name" placeholder="Name" required>
-        <input type="email" name="email" placeholder="Email" required>
-        <button type="submit">Signup</button>
-    </form>
+      <form action="/signup-submit" method="POST">
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <input type="text" name="name" id="name" placeholder="Jane Smith" required>
+        </div>
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" name="email" id="email" placeholder="you@example.com" required>
+        </div>
 
-    <a href="/login">Login</a>
+        <button type="submit" class="btn btn-primary btn-full">
+          Create Account →
+        </button>
+      </form>
+
+      <div class="divider">or</div>
+
+      <div class="auth-footer">
+        Already have an account?
+        <a href="/login">Sign in</a>
+      </div>
+
+      <div style="text-align:center; margin-top: 20px;">
+        <button onclick="toggleTheme()" id="themeBtn" title="Toggle theme" style="margin:auto">🌙</button>
+      </div>
+
+    </div>
+  </div>
 </div>
 
 </body>
