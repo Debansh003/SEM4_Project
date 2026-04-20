@@ -1,21 +1,21 @@
 import express from 'express';
-import { fileURLToPath } from 'url';
-import path from 'path';
 import { PrismaClient } from '@prisma/client';
 import session from 'express-session';
 import bcrypt from 'bcrypt';
-
-const prisma = new PrismaClient();
-const server = express();
+import { fileURLToPath } from 'url';
+import path from 'path';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const prisma = new PrismaClient();
+const server = express();
+
+
 const SALT_ROUNDS = 12;
 
 // ================= MIDDLEWARE =================
-server.use(express.urlencoded({ extended: false }));
-server.use(express.static(__dirname));
+server.use(express.static(path.join(__dirname)));
 
 server.use(session({
     secret: process.env.SESSION_SECRET || 'energypredict-secret-key',
@@ -198,6 +198,10 @@ server.post('/predict-wind', isAuth, (req, res) => {
         parseFloat(efficiency);
 
     res.redirect(`/result.html?energy=${energy}`);
+});
+
+server.get('/debug', (req, res) => {
+    res.send(__dirname);
 });
 
 // ================= SERVER =================
