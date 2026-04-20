@@ -201,6 +201,6 @@ server.post('/predict-wind', isAuth, (req, res) => {
 });
 
 // ================= SERVER =================
-server.listen(3000, () => {
-    console.log("Server: http://localhost:3000");
+server.listen(process.env.PORT || 3000, () => {
+    console.log("Server running");
 });
