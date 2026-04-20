@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+     "build": "prisma generate",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "prisma generate && prisma migrate deploy",
     "start": "node index.js"
