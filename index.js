@@ -168,9 +168,11 @@ server.post('/contact-submit', isAuth, async (req, res) => {
         await prisma.contact.create({
             data: { name, email, message }
         });
+        
 
         // ✅ FIXED REDIRECT
-        res.redirect('/contact');
+        // res.redirect('/contact');
+        res.redirect('/contact?success=1');
 
     } catch (err) {
         console.log(err);
