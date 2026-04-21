@@ -200,10 +200,6 @@ server.post('/predict-wind', isAuth, (req, res) => {
     res.redirect(`/result.html?energy=${energy}`);
 });
 
-server.get('/debug', (req, res) => {
-    res.send(__dirname);
-});
-
 // ================= SERVER =================
 server.listen(process.env.PORT || 3000, '0.0.0.0', () => {
     console.log("Server running on port " + (process.env.PORT || 3000));
