@@ -141,7 +141,7 @@ body {
 
 .nav-brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
 
-/* .nav-logo {
+.nav-logo {
   width: 36px; height: 36px;
   border-radius: 10px;
   background: linear-gradient(135deg, var(--accent), var(--accent3));
@@ -154,7 +154,7 @@ body {
   content: '';
   position: absolute; inset: 0;
   background: linear-gradient(135deg, rgba(255,255,255,0.22), transparent);
-} */
+}
 
 nav h2 {
   font-family: var(--font-display);
