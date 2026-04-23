@@ -190,14 +190,14 @@ server.post('/predict-wind', isAuth, (req, res) => {
     const { area, airDensity, velocity, cp, efficiency } = req.body;
 
     const energy =
-        -0.5 *
+        0.5 *
         parseFloat(airDensity) *
         parseFloat(area) *
         Math.pow(parseFloat(velocity), 3) *
         parseFloat(cp) *
         parseFloat(efficiency);
 
-    res.redirect(`/result.html?energy=${energy}`);
+    res.redirect(`/result.html?energy=${-energy}`);
 });
 
 // ================= SERVER =================
