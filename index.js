@@ -15,20 +15,25 @@ const SALT_ROUNDS = 12;
 
 // ================= MIDDLEWARE =================
 
-// 🔥 IMPORTANT FIX (THIS WAS MISSING)
+// 🔥 BODY PARSER (MUST BE FIRST)
 server.use(express.json());
 server.use(express.urlencoded({ extended: true }));
 
+// 🔥 TRUST PROXY (REQUIRED FOR CLOUDLFARE / RAILWAY)
+server.set('trust proxy', 1);
+
+// STATIC FILES
 server.use(express.static(path.join(__dirname)));
 
+// 🔥 SESSION FIXED
 server.use(session({
     secret: process.env.SESSION_SECRET || 'energypredict-secret-key',
     resave: false,
     saveUninitialized: false,
     cookie: {
         httpOnly: true,
-        secure: true,          // 🔥 for production (HTTPS)
-        sameSite: "None",      // 🔥 needed for cross-site
+        secure: true,          // HTTPS only
+        sameSite: "Lax",       // 🔥 FIXED (was None)
         maxAge: 1000 * 60 * 60 * 24 * 7
     }
 }));
@@ -73,7 +78,11 @@ server.get('/logout', (req, res) => {
 server.post('/signup-submit', async (req, res) => {
     const { name, email, password } = req.body || {};
 
-    if (!password || password.length < 6) {
+    if (!name || !email || !password) {
+        return res.send(`<script>alert("All fields required.");window.history.back();</script>`);
+    }
+
+    if (password.length < 6) {
         return res.send(`<script>alert("Password must be at least 6 characters.");window.history.back();</script>`);
     }
 
@@ -96,7 +105,7 @@ server.post('/signup-submit', async (req, res) => {
         res.redirect('/');
 
     } catch (err) {
-        console.log(err);
+        console.log("SIGNUP ERROR:", err);
         res.send(`<script>alert("Something went wrong.");window.history.back();</script>`);
     }
 });
@@ -104,6 +113,10 @@ server.post('/signup-submit', async (req, res) => {
 // ================= LOGIN =================
 server.post('/login-submit', async (req, res) => {
     const { email, password } = req.body || {};
+
+    if (!email || !password) {
+        return res.send(`<script>alert("All fields required.");window.history.back();</script>`);
+    }
 
     try {
         const user = await prisma.user.findUnique({ where: { email } });
@@ -124,7 +137,7 @@ server.post('/login-submit', async (req, res) => {
         res.redirect('/');
 
     } catch (err) {
-        console.log(err);
+        console.log("LOGIN ERROR:", err);
         res.send(`<script>alert("Something went wrong.");window.history.back();</script>`);
     }
 });
@@ -150,7 +163,7 @@ server.post('/contact-submit', isAuth, async (req, res) => {
         res.redirect('/contact');
 
     } catch (err) {
-        console.log(err);
+        console.log("CONTACT ERROR:", err);
         res.send(`<script>alert("Something went wrong.");window.history.back();</script>`);
     }
 });
