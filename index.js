@@ -11,10 +11,14 @@ const __dirname = path.dirname(__filename);
 const prisma = new PrismaClient();
 const server = express();
 
-
 const SALT_ROUNDS = 12;
 
 // ================= MIDDLEWARE =================
+
+// 🔥 IMPORTANT FIX (THIS WAS MISSING)
+server.use(express.json());
+server.use(express.urlencoded({ extended: true }));
+
 server.use(express.static(path.join(__dirname)));
 
 server.use(session({
@@ -23,7 +27,9 @@ server.use(session({
     saveUninitialized: false,
     cookie: {
         httpOnly: true,
-        maxAge: 1000 * 60 * 60 * 24 * 7   // 7 days
+        secure: true,          // 🔥 for production (HTTPS)
+        sameSite: "None",      // 🔥 needed for cross-site
+        maxAge: 1000 * 60 * 60 * 24 * 7
     }
 }));
 
@@ -65,31 +71,24 @@ server.get('/logout', (req, res) => {
 
 // ================= SIGNUP =================
 server.post('/signup-submit', async (req, res) => {
-    const { name, email, password } = req.body;
+    const { name, email, password } = req.body || {};
 
     if (!password || password.length < 6) {
-        return res.send(`
-            <script>
-                alert("Password must be at least 6 characters.");
-                window.history.back();
-            </script>
-        `);
+        return res.send(`<script>alert("Password must be at least 6 characters.");window.history.back();</script>`);
     }
 
     try {
         const exists = await prisma.user.findUnique({ where: { email } });
 
         if (exists) {
-            return res.send(`
-                <script>
-                    alert("User already exists! Please login.");
-                    window.location.href = "/login";
-                </script>
-            `);
+            return res.send(`<script>alert("User already exists! Please login.");window.location.href="/login";</script>`);
         }
 
         const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
-        const user = await prisma.user.create({ data: { name, email, password: hashedPassword } });
+
+        const user = await prisma.user.create({
+            data: { name, email, password: hashedPassword }
+        });
 
         req.session.userId = user.id;
         req.session.userName = user.name;
@@ -98,35 +97,25 @@ server.post('/signup-submit', async (req, res) => {
 
     } catch (err) {
         console.log(err);
-        res.send(`<script>alert("Something went wrong."); window.history.back();</script>`);
+        res.send(`<script>alert("Something went wrong.");window.history.back();</script>`);
     }
 });
 
 // ================= LOGIN =================
 server.post('/login-submit', async (req, res) => {
-    const { email, password } = req.body;
+    const { email, password } = req.body || {};
 
     try {
         const user = await prisma.user.findUnique({ where: { email } });
 
         if (!user) {
-            return res.send(`
-                <script>
-                    alert("User not found! Please signup first.");
-                    window.location.href = "/signup";
-                </script>
-            `);
+            return res.send(`<script>alert("User not found! Please signup first.");window.location.href="/signup";</script>`);
         }
 
         const match = await bcrypt.compare(password, user.password);
 
         if (!match) {
-            return res.send(`
-                <script>
-                    alert("Incorrect password. Please try again.");
-                    window.history.back();
-                </script>
-            `);
+            return res.send(`<script>alert("Incorrect password.");window.history.back();</script>`);
         }
 
         req.session.userId = user.id;
@@ -136,21 +125,16 @@ server.post('/login-submit', async (req, res) => {
 
     } catch (err) {
         console.log(err);
-        res.send(`<script>alert("Something went wrong."); window.history.back();</script>`);
+        res.send(`<script>alert("Something went wrong.");window.history.back();</script>`);
     }
 });
 
 // ================= CONTACT =================
 server.post('/contact-submit', isAuth, async (req, res) => {
-    const { name, email, message } = req.body;
+    const { name, email, message } = req.body || {};
 
     if (!message || message.trim() === "") {
-        return res.send(`
-            <script>
-                alert("Message is required!");
-                window.history.back();
-            </script>
-        `);
+        return res.send(`<script>alert("Message is required!");window.history.back();</script>`);
     }
 
     try {
@@ -164,9 +148,10 @@ server.post('/contact-submit', isAuth, async (req, res) => {
         });
 
         res.redirect('/contact');
+
     } catch (err) {
         console.log(err);
-        res.send(`<script>alert("Something went wrong."); window.history.back();</script>`);
+        res.send(`<script>alert("Something went wrong.");window.history.back();</script>`);
     }
 });
 
@@ -174,7 +159,7 @@ server.post('/contact-submit', isAuth, async (req, res) => {
 
 // SOLAR
 server.post('/predict', isAuth, (req, res) => {
-    const { area, efficiency, irradiance, pr } = req.body;
+    const { area, efficiency, irradiance, pr } = req.body || {};
 
     const energy =
         parseFloat(area) *
@@ -187,7 +172,7 @@ server.post('/predict', isAuth, (req, res) => {
 
 // WIND
 server.post('/predict-wind', isAuth, (req, res) => {
-    const { area, airDensity, velocity, cp, efficiency } = req.body;
+    const { area, airDensity, velocity, cp, efficiency } = req.body || {};
 
     const energy =
         0.5 *
@@ -197,7 +182,7 @@ server.post('/predict-wind', isAuth, (req, res) => {
         parseFloat(cp) *
         parseFloat(efficiency);
 
-    res.redirect(`/result.html?energy=${-energy}`);
+    res.redirect(`/result.html?energy=${energy}`);
 });
 
 // ================= SERVER =================
