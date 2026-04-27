@@ -9,6 +9,59 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" crossorigin="anonymous">
   <script src="/theme.js"></script>
+  <style>
+    .city-bar {
+      display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+      margin-bottom: 22px; position: relative; z-index: 1;
+    }
+    .city-bar .input-wrap { flex: 1; min-width: 180px; }
+    .city-bar .input-wrap input { padding-left: 40px; }
+    .fetch-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 13px 22px; border: none; border-radius: var(--radius);
+      background: linear-gradient(135deg, var(--accent), var(--accent3));
+      color: #000; font-family: var(--font-display); font-size: 0.88rem;
+      font-weight: 700; cursor: pointer; white-space: nowrap;
+      box-shadow: 0 4px 24px rgba(0,212,255,0.3); transition: 0.25s;
+    }
+    .fetch-btn:hover { box-shadow: 0 6px 36px rgba(0,212,255,0.5); transform: translateY(-2px); }
+    .fetch-btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+
+    .weather-pill {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: rgba(0,229,160,0.08); border: 1px solid rgba(0,229,160,0.25);
+      border-radius: 100px; padding: 5px 14px;
+      font-family: var(--font-mono); font-size: 0.7rem; color: var(--green);
+      position: relative; z-index: 1; margin-bottom: 16px;
+      opacity: 0; transition: opacity 0.4s;
+    }
+    .weather-pill.show { opacity: 1; }
+    .weather-pill .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 6px var(--green); }
+
+    .api-error {
+      background: rgba(255,107,107,0.08); border: 1px solid rgba(255,107,107,0.25);
+      border-radius: var(--radius); padding: 10px 16px;
+      font-family: var(--font-mono); font-size: 0.72rem; color: #ff6b6b;
+      margin-bottom: 16px; display: none; position: relative; z-index: 1;
+    }
+    .api-error.show { display: block; }
+
+    .section-label-inline {
+      font-family: var(--font-mono); font-size: 0.65rem;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 14px;
+      display: flex; align-items: center; gap: 10px;
+      position: relative; z-index: 1;
+    }
+    .section-label-inline::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 6px var(--accent); }
+
+    .autofilled {
+      border-color: var(--green) !important;
+      background: rgba(0,229,160,0.06) !important;
+      box-shadow: 0 0 0 3px rgba(0,229,160,0.12) !important;
+      transition: all 0.4s !important;
+    }
+  </style>
 </head>
 <body>
 
@@ -43,7 +96,7 @@
     </h1>
     <p class="hero-desc" data-aos="fade-up" data-aos-duration="700" data-aos-delay="160">
       Physics-based estimation for solar panels and wind turbines.
-      Enter your parameters and get instant daily kWh projections.
+      Enter your parameters or fetch live weather data by city.
     </p>
   </div>
 
@@ -57,8 +110,69 @@
       <div class="stat-label">Energy Sources</div>
     </div>
     <div class="stat-card">
-      <div class="stat-value" style="color:var(--green)">kWh</div>
-      <div class="stat-label">Output Unit</div>
+      <div class="stat-value" style="color:var(--green)">Live</div>
+      <div class="stat-label">Weather Data</div>
+    </div>
+  </div>
+
+  <!-- LIVE DATA CARD -->
+  <div class="card" data-aos="fade-up" data-aos-duration="600" data-aos-delay="220">
+    <div class="card-icon">🌍</div>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;position:relative;z-index:1">
+      <h2 style="font-family:var(--font-display);font-size:1.15rem;font-weight:800">Real-Time Weather Fetch</h2>
+      <span class="badge badge-green">Live API</span>
+    </div>
+    <p style="color:var(--text-muted);font-size:0.86rem;margin-bottom:20px;position:relative;z-index:1">
+      Enter a city and we'll pull today's solar irradiance and wind speed from Open-Meteo — then auto-fill the calculator below.
+    </p>
+
+    <div class="section-label">City Lookup</div>
+
+    <div class="city-bar">
+      <div class="input-wrap">
+        <i class="fa fa-location-dot"></i>
+        <input type="text" id="cityInput" placeholder="e.g. Mumbai, Berlin, New York" onkeydown="if(event.key==='Enter')fetchWeather()">
+      </div>
+      <button class="fetch-btn" id="fetchBtn" onclick="fetchWeather()">
+        <i class="fa fa-satellite-dish"></i> Fetch Data
+      </button>
+    </div>
+
+    <div class="api-error" id="apiError"></div>
+
+    <div class="weather-pill" id="weatherPill">
+      <div class="dot"></div>
+      <span id="pillText">Live data loaded</span>
+    </div>
+
+    <!-- Live stats display -->
+    <div id="liveStats" style="display:none;position:relative;z-index:1">
+      <div class="section-label-inline">Live conditions</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:8px">
+        <div class="stat-card" style="text-align:left;padding:16px">
+          <div style="font-size:12px;color:var(--text-dim);font-family:var(--font-mono);margin-bottom:6px">SOLAR IRRADIANCE</div>
+          <div style="font-size:1.4rem;font-family:var(--font-mono);color:var(--gold)" id="liveIrrad">—</div>
+          <div style="font-size:11px;color:var(--text-dim);font-family:var(--font-mono);margin-top:3px">kWh/m²/day</div>
+        </div>
+        <div class="stat-card" style="text-align:left;padding:16px">
+          <div style="font-size:12px;color:var(--text-dim);font-family:var(--font-mono);margin-bottom:6px">WIND SPEED</div>
+          <div style="font-size:1.4rem;font-family:var(--font-mono);color:var(--accent)" id="liveWind">—</div>
+          <div style="font-size:11px;color:var(--text-dim);font-family:var(--font-mono);margin-top:3px">m/s (avg today)</div>
+        </div>
+        <div class="stat-card" style="text-align:left;padding:16px">
+          <div style="font-size:12px;color:var(--text-dim);font-family:var(--font-mono);margin-bottom:6px">AIR DENSITY</div>
+          <div style="font-size:1.4rem;font-family:var(--font-mono);color:var(--green)" id="liveRho">—</div>
+          <div style="font-size:11px;color:var(--text-dim);font-family:var(--font-mono);margin-top:3px">kg/m³ (calc)</div>
+        </div>
+        <div class="stat-card" style="text-align:left;padding:16px">
+          <div style="font-size:12px;color:var(--text-dim);font-family:var(--font-mono);margin-bottom:6px">LOCATION</div>
+          <div style="font-size:0.95rem;font-family:var(--font-mono);color:var(--text)" id="liveLoc">—</div>
+          <div style="font-size:11px;color:var(--text-dim);font-family:var(--font-mono);margin-top:3px">lat / lon</div>
+        </div>
+      </div>
+      <p style="font-size:0.75rem;color:var(--text-dim);font-family:var(--font-mono);position:relative;z-index:1">
+        ↳ Fields auto-filled in both calculators below. You can still edit them manually.
+      </p>
     </div>
   </div>
 
@@ -100,7 +214,7 @@
         <div class="form-group">
           <label><i class="fa fa-sun"></i> Solar Irradiance</label>
           <div class="input-wrap"><i class="fa fa-sun"></i>
-            <input type="number" name="irradiance" placeholder="e.g. 5" step="any" required></div>
+            <input type="number" name="irradiance" id="solarIrrad" placeholder="e.g. 5  ← auto-filled" step="any" required></div>
           <div class="input-hint">kWh/m²/day — daily resource</div>
         </div>
         <div class="form-group">
@@ -135,7 +249,7 @@
         <div class="form-group">
           <label><i class="fa fa-wind"></i> Air Density (ρ)</label>
           <div class="input-wrap"><i class="fa fa-cloud"></i>
-            <input type="number" name="airDensity" placeholder="e.g. 1.225" step="any" required></div>
+            <input type="number" name="airDensity" id="windRho" placeholder="e.g. 1.225  ← auto-filled" step="any" required></div>
           <div class="input-hint">kg/m³ &nbsp;·&nbsp; std: 1.225</div>
         </div>
       </div>
@@ -143,7 +257,7 @@
         <div class="form-group">
           <label><i class="fa fa-gauge-high"></i> Wind Speed</label>
           <div class="input-wrap"><i class="fa fa-arrow-right"></i>
-            <input type="number" name="velocity" placeholder="e.g. 7" step="any" required></div>
+            <input type="number" name="velocity" id="windVelocity" placeholder="e.g. 7  ← auto-filled" step="any" required></div>
           <div class="input-hint">m/s</div>
         </div>
         <div class="form-group">
@@ -198,6 +312,96 @@ const io=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersect
 document.querySelectorAll('.count-up').forEach(el=>io.observe(el));
 
 gsap.from('#navbar',{y:-20,opacity:0,duration:0.7,ease:'power3.out'});
+
+// ============================================================
+//  REAL-TIME WEATHER FETCH — Open-Meteo (no API key needed)
+// ============================================================
+
+async function fetchWeather() {
+  const city = document.getElementById('cityInput').value.trim();
+  if (!city) { showError('Please enter a city name.'); return; }
+
+  const btn = document.getElementById('fetchBtn');
+  const errorEl = document.getElementById('apiError');
+  errorEl.classList.remove('show');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Fetching…';
+
+  try {
+    // Step 1 — Geocode city → lat/lon
+    const geoRes = await fetch(
+      `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=en&format=json`
+    );
+    if (!geoRes.ok) throw new Error('Geocoding request failed');
+    const geoData = await geoRes.json();
+
+    if (!geoData.results || geoData.results.length === 0) {
+      throw new Error(`City "${city}" not found. Try a different spelling.`);
+    }
+
+    const { latitude, longitude, name, country, elevation } = geoData.results[0];
+
+    // Step 2 — Fetch today's weather from Open-Meteo
+    const today = new Date().toISOString().slice(0, 10);
+    const weatherRes = await fetch(
+      `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}` +
+      `&daily=shortwave_radiation_sum,wind_speed_10m_max,temperature_2m_mean,surface_pressure_mean` +
+      `&wind_speed_unit=ms&timezone=auto&start_date=${today}&end_date=${today}`
+    );
+    if (!weatherRes.ok) throw new Error('Weather request failed');
+    const wx = await weatherRes.json();
+
+    const irradiance = parseFloat((wx.daily.shortwave_radiation_sum[0] / 1000).toFixed(2)); // Wh → kWh
+    const windSpeed  = parseFloat((wx.daily.wind_speed_10m_max[0]).toFixed(2));              // already m/s
+    const tempC      = wx.daily.temperature_2m_mean[0];
+    const pressurePa = (wx.daily.surface_pressure_mean?.[0] || 1013.25) * 100;              // hPa → Pa
+
+    // Ideal gas: ρ = P / (R_specific × T_kelvin)
+    const R_air = 287.05;
+    const rho   = parseFloat((pressurePa / (R_air * (tempC + 273.15))).toFixed(3));
+
+    // Step 3 — Update UI
+    document.getElementById('liveIrrad').textContent = irradiance;
+    document.getElementById('liveWind').textContent  = windSpeed;
+    document.getElementById('liveRho').textContent   = rho;
+    document.getElementById('liveLoc').textContent   = `${name}, ${country}`;
+
+    document.getElementById('liveStats').style.display = 'block';
+    gsap.from('#liveStats', { opacity: 0, y: 12, duration: 0.5, ease: 'power3.out' });
+
+    // Step 4 — Auto-fill form fields
+    autoFill('solarIrrad',   irradiance);
+    autoFill('windVelocity', windSpeed);
+    autoFill('windRho',      rho);
+
+    // Show pill
+    const pill = document.getElementById('weatherPill');
+    document.getElementById('pillText').textContent =
+      `Live data for ${name}, ${country} — ${today}`;
+    pill.classList.add('show');
+
+  } catch (err) {
+    showError(err.message || 'Something went wrong. Check the city name and try again.');
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '<i class="fa fa-satellite-dish"></i> Fetch Data';
+}
+
+function autoFill(id, value) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.value = value;
+  el.classList.add('autofilled');
+  setTimeout(() => el.classList.remove('autofilled'), 2200);
+}
+
+function showError(msg) {
+  const el = document.getElementById('apiError');
+  el.textContent = '⚠ ' + msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 5000);
+}
 </script>
 </body>
 </html>
